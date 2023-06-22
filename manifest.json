@@ -1,0 +1,20 @@
+{
+	"manifest_version": 2,
+	"name": "Restalògic",
+	"version": "1.0",
+	"description": "Actualitza la graella de les pistes del paraulògic.",
+	"icons": {
+		"48": "icons/restalogic-48.png"
+	},
+	"content_scripts": [
+		{
+		  "matches": ["*://www.vilaweb.cat/paraulogic*"],
+		  "js": ["restalogic.js"]
+		}
+	],
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "lluis.alemany.puig@gmail.com"
+		}
+	}
+}
