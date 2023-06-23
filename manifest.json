@@ -8,8 +8,10 @@
 	},
 	"content_scripts": [
 		{
-		  "matches": ["*://www.vilaweb.cat/paraulogic*"],
-		  "js": ["restalogic.js"]
+			"matches": ["*://www.vilaweb.cat/paraulogic*"],
+			"js": [
+				"restalogic.js"
+			]
 		}
 	],
 	"browser_specific_settings": {
