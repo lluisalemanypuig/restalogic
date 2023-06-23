@@ -19,11 +19,88 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	lluis.alemany.puig@gmail.com
 */
 
-function llista_paraules_trobades() {
+/* ----------------------------------------------- */
+
+/// Was the extension run for the first time?
+var first_access = true;
+
+/// Contents of the grid of clues
+var cluesgrid = null;
+/// Sizes of the grid
+var num_rows = -1;
+var num_cols = -1;
+/// Minimum length of the words
+var min_word_length = -1;
+
+/// Mapping of letters to rows and columns of the grid
+var map_letters = null;
+var all_letters = [];
+
+/// Words found by the user
+var all_words = [];
+
+
+/* ----------------------------------------------- */
+
+function str_to_int(str) {
+	return parseInt(str, 10);
+}
+
+function clone_grid() {
+	var copy = Array(num_rows);
+	for (var i = 0; i < num_rows; ++i) {
+		copy[i] = [...cluesgrid[i]];
+	}
+	return copy;
+}
+
+function word_length(str) {
+	var length = str.length;
+	for (var i = 0; i < str.length; ++i) {
+		if (str[i] == "-") {
+			--length;
+		}
+	}
+	return length;
+}
+
+function get_num_words_from_page() {
+	var n = document.getElementById("letters-found");
+	return str_to_int(n.textContent);
+}
+
+function replace_character(str, o, n) {
+	while (str.indexOf(o) != -1) {
+		str = str.replace(o, n);
+	}
+	return str;
+}
+
+function normalize_word(word) {
+	word = replace_character(word, 'à', 'a');
+	word = replace_character(word, 'á', 'a'); // who knows...
+	word = replace_character(word, 'è', 'e');
+	word = replace_character(word, 'é', 'e');
+	word = replace_character(word, 'ì', 'i'); // who knows...
+	word = replace_character(word, 'í', 'i');
+	word = replace_character(word, 'ò', 'o');
+	word = replace_character(word, 'ó', 'o');
+	word = replace_character(word, 'ù', 'u'); // who knows...
+	word = replace_character(word, 'ú', 'u');
+	return word;
+}
+
+/* ----------------------------------------------- */
+
+/**
+ * Retrieve all words found by the user.
+ * 
+ * @pre This assumes they have never been retrieved before
+ */
+function retrieve_all_words_first_time() {
 	discovered_text = document.getElementById("discovered-text");
 	children = discovered_text.childNodes;
 	
-	var all_words = [];
 	var i = 0;
 	
 	while (i < children.length) {
@@ -41,184 +118,272 @@ function llista_paraules_trobades() {
 		++i;
 		
 		if (i < children.length) {
+			const word = children[i].textContent;
+			const normal_word = normalize_word(word);
 			
-			//console.log(i, children[i].textContent, children[i].textContent.length);
+			//console.log(i, word, "->", normal_word, ":", word_length(word));
 			
-			all_words.push( children[i].textContent );
+			all_words.push( normal_word );
 		}
 	}
-	
-	return all_words;
 }
 
-function troba_lletres() {
-	var lletres = [];
+/**
+ * Completes the array 'all_words' by inserting the new words
+ * 
+ * @pre This assumes the array 'all_words' already contains words
+ */
+function retrieve_all_words_nth_time(goal_num_words) {
+	//console.log("=====================");
 	
+	var discovered_text = document.getElementById("discovered-text");
+	
+	// index over all_words
+	var j = 0;
+	
+	// index over 'children'
+	var i = 0;
+	var children = discovered_text.childNodes;
+	while (i < children.length) {
+		
+		while (
+			i < children.length &&
+			children[i].nodeValue != ", " &&
+			children[i].nodeValue != ": " &&
+			children[i].nodeValue != "."
+		)
+		{
+			++i;
+		}
+		
+		++i;
+		
+		if (i < children.length) {
+			
+			console.log(i, children[i].textContent, children[i].textContent.length);
+			
+			const word = children[i].textContent;
+			const normal_word = normalize_word(word);
+			
+			//console.log("----------------");
+			//console.log("word=", word);
+			//console.log("normal_word=", normal_word);
+			//console.log("j=", j);
+			//console.log("all_words[j]=", all_words[j]);
+			
+			if (normal_word == all_words[j]) {
+				++j;
+				//console.log("    continue");
+			}
+			else {
+				
+				if (j == all_words.length) {
+					// push new word at the end of the array
+					all_words.push( normal_word );
+					++j;
+				}
+				else {
+					// <0 if "all_words[j] >  words"
+					// =0 if "all_words[j] == words"
+					// >0 if "all_words[j] <  words"
+					const comp = all_words[j].localeCompare( normal_word );
+					if (comp > 0) {
+						all_words.splice(j, 0, normal_word);
+						++j;
+						//console.log("    all_words=", all_words);
+					}
+				}
+				
+				if (all_words.length == goal_num_words) {
+					//console.log("    break");
+					break;
+				}
+			}
+		}
+	}
+}
+
+function get_letters() {
 	var hex_grid = document.getElementById("hex-grid");
 	//console.log(hex_grid);
 	
 	for (var i = 0; i < 7; ++i) {
 		var lletra = hex_grid.childNodes[i].childNodes[0].childNodes[0].textContent;
 		if (lletra != " ") {
-			lletres.push(lletra);
+			all_letters.push(lletra);
 		}
 	}
 	
-	lletres.sort();
+	all_letters.sort();
 	
-	var map = new Map();
-	for (var i = 0; i < lletres.length; ++i) {
-		map.set(lletres[i], i + 1);
+	map_letters = new Map();
+	for (var i = 0; i < all_letters.length; ++i) {
+		map_letters.set(all_letters[i], i + 1);
 	}
-	
-	return map;
 }
 
 // actualitza cel·la: resta en 1 el valor actual de la cel·la
-function actualitza_cella(copy_contents_graella, i, j, cell) {
+function update_cell(copy_cluesgrid, i, j, cell) {
 	//console.log("    i=", i, "j=", j);
 	
-	//console.log("    count=", copy_contents_graella[i][j]);
-	--copy_contents_graella[i][j];
-	//console.log("    count=", copy_contents_graella[i][j]);
+	//console.log("    count=", copy_cluesgrid[i][j]);
+	--copy_cluesgrid[i][j];
+	//console.log("    count=", copy_cluesgrid[i][j]);
 	
-	cell.childNodes[0].textContent = copy_contents_graella[i][j];
+	cell.childNodes[0].textContent = copy_cluesgrid[i][j];
 }
 
-var first_access = true;
-var contents_graella = null;
-var num_rows;
-var num_cols;
-var map_letters;
-
-function get_contents_graella() {
-	// 'graella' object
-	var graella_body = 
+/**
+ * Retrieve all information concerning the clues grid.
+ * 
+ * @pre Needs the value of:
+ * - num_rows
+ * 
+ * @post Sets value to:
+ * - cluesgrid
+ * - min_word_length
+ */
+function make_clustergrid() {
+	// 'cluesgrid' object
+	var cluesgrid_body = 
 		document.getElementById("table_graella")
 		.getElementsByTagName("tbody");
 	
-	if (graella_body.length == 0) {
-		//console.log("graella is not loaded")
+	if (cluesgrid_body.length == 0) {
+		//console.log("cluesgrid is not loaded")
 		return;
 	}
 	
-	contents_graella = new Array(num_rows);
-	//console.log("contents_graella.length=", contents_graella.length);
+	//console.log("cluesgrid_body:", cluesgrid_body);
 	
-	graella_body = graella_body[0];
-	var header = graella_body.getElementsByTagName("tr")[0];
+	cluesgrid = new Array(num_rows);
+	//console.log("cluesgrid.length=", cluesgrid.length);
 	
-	//console.log("graella_body.rows.length=", graella_body.rows.length);
-	for (var i = 1; i < graella_body.rows.length; ++i) {
-		contents_graella[i - 1] = [];
+	cluesgrid_body = cluesgrid_body[0];
+	var header = cluesgrid_body.children[0];
+	//console.log("header:", header);
+	
+	min_word_length = str_to_int(header.children[1].textContent);
+	//console.log("min_word_length=", min_word_length);
+	
+	//console.log("cluesgrid_body.rows.length=", cluesgrid_body.rows.length);
+	for (var i = 1; i < cluesgrid_body.rows.length; ++i) {
+		cluesgrid[i - 1] = [];
 		
-		var row = graella_body.getElementsByTagName("tr")[i];
+		var row = cluesgrid_body.children[i];
 		//console.log("i=", i, row);
 		
 		for (var j = 1; j < row.childElementCount; ++j) {
-			var cell = row.getElementsByTagName("th")[j];
+			var cell = row.children[j];
 			
 			if (cell.childNodes[0] != null) {
 				var data = parseInt(cell.childNodes[0].textContent, 10);
 				//console.log( i - 1, data );
 				
-				contents_graella[i - 1].push( data );
+				cluesgrid[i - 1].push( data );
 			}
 		}
 	}
 	
-	//console.log(contents_graella);
+	//console.log(cluesgrid);
 }
 
-function actualitza_graella(event) {
+/// Function called for every click to the 'Clues' "button"
+function update_cluesgrid(event) {
+	
 	if (first_access) {
-		// lletres del paraulogic del dia
-		map_letters = troba_lletres();
+		//console.log("First access");
+		
+		// letters in today's paraulogic
+		get_letters();
+		//console.log("Lletres del dia:", all_letters);
 		//console.log("Lletres del dia:", map_letters);
 		
+		// number of rows of cluesgrid
 		num_rows = map_letters.size + 1;
 		//console.log("num_rows=", num_rows);
 		
-		//console.log("First access");
-		contents_graella = [];
-		for (var i = 0; i < 7; ++i) {
-			contents_graella[i] = Array(7);
-			for (var j = 0; j < 7; ++j) {
-				contents_graella[i][j] = 0;
-			}
-		}
-		get_contents_graella();
+		// initialize grid
+		make_clustergrid();
+		num_cols = cluesgrid[0].length;
 		
-		num_rows = contents_graella.length;
-		num_cols = contents_graella[0].length;
-		
+		//console.log("cluesgrid:", cluesgrid);
 		//console.log("num_cols=", num_cols);
+		
+		retrieve_all_words_first_time();
+		//console.log("all_words=", all_words);
 		
 		first_access = false;
 	}
 	
-	// deep copy 'contents_graella'
-	var copy = Array(7);
-	for (var i = 0; i < 7; ++i) {
-		copy[i] = [...contents_graella[i]];
+	{
+	const num_words_from_page = get_num_words_from_page();
+	if (num_words_from_page != all_words.length) {
+		//console.log("all_words.length=", all_words.length);
+		//console.log("get_num_words_from_page()=", num_words_from_page);
+		//console.log("Time to update 'all_words'");
+		
+		retrieve_all_words_nth_time(num_words_from_page);
+		
+		//console.log("all_words=", all_words);
+	}
 	}
 	
-	// llistat de paraules
-	var llista_paraules = llista_paraules_trobades();
-	//console.log("Paraules trobades:", llista_paraules);
+	// deep copy 'cluesgrid'
+	var copy = clone_grid();
 	
-	// 'graella' object
-	var graella_body = 
+	// 'cluesgrid' object
+	var cluesgrid_body = 
 		document.getElementById("table_graella")
 		.getElementsByTagName("tbody");
 	
-	if (graella_body.length == 0) {
-		//console.log("graella is not loaded")
+	if (cluesgrid_body.length == 0) {
+		//console.log("cluesgrid is not loaded")
 		return;
 	}
 	
-	graella_body = graella_body[0];
-	var header = graella_body.getElementsByTagName("tr")[0];
-	var bottom = graella_body.getElementsByTagName("tr")[num_rows];
+	cluesgrid_body = cluesgrid_body[0];
+	var header = cluesgrid_body.getElementsByTagName("tr")[0];
+	var bottom = cluesgrid_body.getElementsByTagName("tr")[num_rows];
 	
 	//console.log("header:", header);
 	//console.log("bottom:", bottom);
 	
-	for (var i = 0; i < llista_paraules.length; ++i) {
-		var paraula = llista_paraules[i];
-		//console.log("actualitzant per la paraula:", paraula);
+	for (var i = 0; i < all_words.length; ++i) {
+		var word = all_words[i];
+		//console.log("updating grid with word:", word);
 		
-		var inicial = paraula[0];
+		const initial = word[0];
 		
-		var index_inicial = map_letters.get(inicial);
-		var index_longitud = (paraula.length - 3) + 1;
+		var index_initial = map_letters.get(initial);
+		var index_length = (word_length(word) - min_word_length) + 1;
 		
-		var row = graella_body.getElementsByTagName("tr")[ index_inicial ];
+		var row = cluesgrid_body.getElementsByTagName("tr")[ index_initial ];
 		//console.log("    ", row);
 		
-		var cell = row.getElementsByTagName("th")[ index_longitud ];
+		var cell = row.getElementsByTagName("th")[ index_length ];
 		
-		var ii = index_inicial - 1;
-		var jj = index_longitud - 1;
+		var ii = index_initial - 1;
+		var jj = index_length - 1;
 		
 		//console.log("    Update individual cell");
 		//console.log("    i=", ii, " j=", jj);
-		actualitza_cella(copy, ii, jj, cell);
+		update_cell(copy, ii, jj, cell);
 		
 		//console.log("    count=", copy[ii][jj]);
 		
 		//console.log("Update total letter count in row", ii);
-		actualitza_cella(copy, ii, num_cols - 1, row.lastChild);
+		update_cell(copy, ii, num_cols - 1, row.lastChild);
 		
 		//console.log("Update total length count in column", jj);
-		actualitza_cella(copy, num_rows - 1, jj, bottom.getElementsByTagName("th")[ index_longitud ]);
+		update_cell(copy, num_rows - 1, jj, bottom.getElementsByTagName("th")[ index_length ]);
 		
 		//console.log("Update total count in column", jj);
-		actualitza_cella(copy, num_rows - 1, num_cols - 1, bottom.children[num_cols]);
+		update_cell(copy, num_rows - 1, num_cols - 1, bottom.children[num_cols]);
 	}
 	
-	//console.log("copy_contents_graella:", copy);
+	//console.log("copy_cluesgrid:", copy);
 }
 
-document.getElementById("pistes-link").addEventListener('click', actualitza_graella);
+document.getElementById("pistes-link").addEventListener('click', update_cluesgrid);
 
