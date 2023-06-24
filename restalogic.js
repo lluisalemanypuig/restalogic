@@ -160,7 +160,7 @@ function retrieve_all_words_nth_time(goal_num_words) {
 		
 		if (i < children.length) {
 			
-			console.log(i, children[i].textContent, children[i].textContent.length);
+			//console.log(i, children[i].textContent, children[i].textContent.length);
 			
 			const word = children[i].textContent;
 			const normal_word = normalize_word(word);
