@@ -48,14 +48,6 @@ function str_to_int(str) {
 	return parseInt(str, 10);
 }
 
-function clone_grid() {
-	var copy = Array(num_rows);
-	for (var i = 0; i < num_rows; ++i) {
-		copy[i] = [...cluesgrid[i]];
-	}
-	return copy;
-}
-
 function word_length(str) {
 	var length = str.length;
 	for (var i = 0; i < str.length; ++i) {
@@ -90,16 +82,45 @@ function normalize_word(word) {
 	return new_word;
 }
 
+function update_cell_cluesgrid(word) {
+	const initial = word[0];
+	var index_initial = map_letters.get(initial);
+	var index_length = (word_length(word) - min_word_length) + 1;
+	
+	var i = index_initial - 1;
+	var j = index_length - 1;
+	//console.log("Update cell", i, j);
+	
+	// update cell corresponding to the word
+	--cluesgrid[i][j];
+	// update cell corresponding to the total amount
+	// of words starting with the initial
+	--cluesgrid[i][num_cols - 1];
+	// update cell corresponding to the total amount
+	// of words of this length
+	--cluesgrid[num_rows - 1][j];
+	// update cell corresponding to the total amount of words
+	--cluesgrid[num_rows - 1][num_cols - 1];
+}
+
+function update_cell_prefixes(word) {
+	var prefix = word[0] + word[1];
+	map_prefixes.set(prefix, map_prefixes.get(prefix) - 1);
+}
+
 /* ----------------------------------------------- */
 
 /**
  * Retrieve all words found by the user.
  * 
- * @pre This assumes they have never been retrieved before
+ * @pre This assumes:
+ * - 'all_words' is empty
+ * - all values in 'cluesgrid' are set
+ * - 'map_letters' is set
  */
 function retrieve_all_words_first_time() {
-	discovered_text = document.getElementById("discovered-text");
-	children = discovered_text.childNodes;
+	var discovered_text = document.getElementById("discovered-text");
+	var children = discovered_text.childNodes;
 	
 	var i = 0;
 	
@@ -123,7 +144,10 @@ function retrieve_all_words_first_time() {
 			
 			//console.log(i, word, "->", normal_word, ":", word_length(word));
 			
-			all_words.push( normal_word );
+			all_words.push(normal_word);
+			
+			update_cell_cluesgrid(normal_word);
+			update_cell_prefixes(normal_word);
 		}
 	}
 }
@@ -179,16 +203,20 @@ function retrieve_all_words_nth_time(goal_num_words) {
 				
 				if (j == all_words.length) {
 					// push new word at the end of the array
-					all_words.push( normal_word );
+					all_words.push(normal_word);
+					update_cell_cluesgrid(normal_word);
+					update_cell_prefixes(normal_word);
 					++j;
 				}
 				else {
 					// <0 if "all_words[j] >  words"
 					// =0 if "all_words[j] == words"
 					// >0 if "all_words[j] <  words"
-					const comp = all_words[j].localeCompare( normal_word );
+					const comp = all_words[j].localeCompare(normal_word);
 					if (comp > 0) {
 						all_words.splice(j, 0, normal_word);
+						update_cell_cluesgrid(normal_word);
+						update_cell_prefixes(normal_word);
 						++j;
 						//console.log("    all_words=", all_words);
 					}
@@ -303,21 +331,7 @@ function make_clustergrid() {
 
 /* ------------------------------------------------------------------ */
 
-// actualitza cel·la: resta en 1 el valor actual de la cel·la
-function update_cell(copy_cluesgrid, i, j, cell) {
-	//console.log("    i=", i, "j=", j);
-	
-	//console.log("    count=", copy_cluesgrid[i][j]);
-	--copy_cluesgrid[i][j];
-	//console.log("    count=", copy_cluesgrid[i][j]);
-	
-	cell.childNodes[0].textContent = copy_cluesgrid[i][j];
-}
-
-function update_grid() {
-	// deep copy 'cluesgrid'
-	var copy = clone_grid();
-	
+function update_grid_html() {
 	// 'cluesgrid' object
 	var cluesgrid_body = 
 		document.getElementById("table_graella")
@@ -335,58 +349,22 @@ function update_grid() {
 	//console.log("header:", header);
 	//console.log("bottom:", bottom);
 	
-	for (var i = 0; i < all_words.length; ++i) {
-		var word = all_words[i];
-		//console.log("updating grid with word:", word);
-		
-		const initial = word[0];
-		
-		var index_initial = map_letters.get(initial);
-		var index_length = (word_length(word) - min_word_length) + 1;
-		
-		var row = cluesgrid_body.getElementsByTagName("tr")[ index_initial ];
-		//console.log("    ", row);
-		
-		var cell = row.getElementsByTagName("th")[ index_length ];
-		
-		var ii = index_initial - 1;
-		var jj = index_length - 1;
-		
-		//console.log("    Update individual cell");
-		//console.log("    i=", ii, " j=", jj);
-		update_cell(copy, ii, jj, cell);
-		
-		//console.log("    count=", copy[ii][jj]);
-		
-		//console.log("Update total letter count in row", ii);
-		update_cell(copy, ii, num_cols - 1, row.lastChild);
-		
-		//console.log("Update total length count in column", jj);
-		update_cell(copy, num_rows - 1, jj, bottom.getElementsByTagName("th")[ index_length ]);
-		
-		//console.log("Update total count in column", jj);
-		update_cell(copy, num_rows - 1, num_cols - 1, bottom.children[num_cols]);
+	for (var i = 0; i < num_rows; ++i) {
+		for (var j = 0; j < num_cols; ++j) {
+			
+			var row = cluesgrid_body.getElementsByTagName("tr")[i + 1];
+			var cell = row.getElementsByTagName("th")[j + 1];
+			
+			cell.childNodes[0].textContent = cluesgrid[i][j];
+		}
 	}
-	
-	//console.log("copy_cluesgrid:", copy);
 }
 
-function update_prefixes() {
-	var copy = new Map(map_prefixes);
-	
-	// first update all counts
-	for (var i = 0; i < all_words.length; ++i) {
-		var word = all_words[i];
-		//console.log("updating prefixes with word:", word);
-		
-		var prefix = word[0] + word[1];
-		copy.set(prefix, copy.get(prefix) - 1);
-	}
-	
+function update_prefixes_html() {
 	// make string and update
 	var contents = "\n          Començaments de paraula recurrents:\n        ";
 	
-	for (const [key, value] of copy) {
+	for (const [key, value] of map_prefixes) {
 		contents += key + "-" + value + " ";
 	}
 	
@@ -416,11 +394,12 @@ function update_clues(event) {
 		//console.log("cluesgrid:", cluesgrid);
 		//console.log("num_cols=", num_cols);
 		
-		retrieve_all_words_first_time();
-		//console.log("all_words=", all_words);
-		
 		get_prefixes();
 		//console.log("map_prefixes=", map_prefixes);
+		
+		retrieve_all_words_first_time();
+		//console.log("all_words=", all_words);
+		//console.log("cluesgrid:", cluesgrid);
 		
 		first_access = false;
 	}
@@ -435,11 +414,12 @@ function update_clues(event) {
 		retrieve_all_words_nth_time(num_words_from_page);
 		
 		//console.log("all_words=", all_words);
+		//console.log("cluesgrid:", cluesgrid);
 	}
 	}
 	
-	update_grid();
-	update_prefixes();
+	update_grid_html();
+	update_prefixes_html();
 }
 
 document.getElementById("pistes-link").addEventListener('click', update_clues);
