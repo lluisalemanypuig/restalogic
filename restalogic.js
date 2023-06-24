@@ -69,25 +69,23 @@ function get_num_words_from_page() {
 	return str_to_int(n.textContent);
 }
 
-function replace_character(str, o, n) {
-	while (str.indexOf(o) != -1) {
-		str = str.replace(o, n);
-	}
-	return str;
+function from_accent_to_nonaccent(c) {
+	// 'remove' the accent from the character
+	if (c == 'à' || c == 'á') { return 'a'; }
+	if (c == 'è' || c == 'é') { return 'e'; }
+	if (c == 'ì' || c == 'í') { return 'i'; }
+	if (c == 'ò' || c == 'ó') { return 'o'; }
+	if (c == 'ù' || c == 'ú') { return 'u'; }
+	// keep the character as it is
+	return c;
 }
 
 function normalize_word(word) {
-	word = replace_character(word, 'à', 'a');
-	word = replace_character(word, 'á', 'a'); // who knows...
-	word = replace_character(word, 'è', 'e');
-	word = replace_character(word, 'é', 'e');
-	word = replace_character(word, 'ì', 'i'); // who knows...
-	word = replace_character(word, 'í', 'i');
-	word = replace_character(word, 'ò', 'o');
-	word = replace_character(word, 'ó', 'o');
-	word = replace_character(word, 'ù', 'u'); // who knows...
-	word = replace_character(word, 'ú', 'u');
-	return word;
+	var new_word = "";
+	for (var i = 0; i < word.length; ++i) {
+		new_word += from_accent_to_nonaccent(word[i]);
+	}
+	return new_word;
 }
 
 /* ----------------------------------------------- */
