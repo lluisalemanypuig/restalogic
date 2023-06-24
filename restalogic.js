@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	lluis.alemany.puig@gmail.com
 */
 
-/* ----------------------------------------------- */
+/* ------------------------------------------------------------------ */
 
 /// Was the extension run for the first time?
 var first_access = true;
@@ -36,11 +36,13 @@ var min_word_length = -1;
 var map_letters = null;
 var all_letters = [];
 
+/// Mapping of 2-letter prefixes to their counts
+var map_prefixes = null;
+
 /// Words found by the user
 var all_words = [];
 
-
-/* ----------------------------------------------- */
+/* ------------------------------------------------------------------ */
 
 function str_to_int(str) {
 	return parseInt(str, 10);
@@ -201,6 +203,9 @@ function retrieve_all_words_nth_time(goal_num_words) {
 	}
 }
 
+/**
+ * Retrieve the list of letters in today's paraulogic
+ */
 function get_letters() {
 	var hex_grid = document.getElementById("hex-grid");
 	//console.log(hex_grid);
@@ -220,15 +225,25 @@ function get_letters() {
 	}
 }
 
-// actualitza cel·la: resta en 1 el valor actual de la cel·la
-function update_cell(copy_cluesgrid, i, j, cell) {
-	//console.log("    i=", i, "j=", j);
+/**
+ * Retrieves all the prefixes in the clues. Also retrieves the countings
+ * of each prefix.
+ */
+function get_prefixes() {
+	var prefix2 = document.getElementById("prefix2");
+	//console.log(prefix2);
 	
-	//console.log("    count=", copy_cluesgrid[i][j]);
-	--copy_cluesgrid[i][j];
-	//console.log("    count=", copy_cluesgrid[i][j]);
+	var contents = prefix2.textContent.split('\n')[2].split(' ');
 	
-	cell.childNodes[0].textContent = copy_cluesgrid[i][j];
+	var i = 0;
+	while (i < contents.length && contents[i] == '') { ++i; }
+	
+	map_prefixes = new Map();
+	while (i < contents.length && contents[i] != '') {
+		var prefix_count = contents[i].split('-');
+		map_prefixes.set(prefix_count[0], str_to_int(prefix_count[1]));
+		++i;
+	}
 }
 
 /**
@@ -286,47 +301,20 @@ function make_clustergrid() {
 	//console.log(cluesgrid);
 }
 
-/// Function called for every click to the 'Clues' "button"
-function update_cluesgrid(event) {
+/* ------------------------------------------------------------------ */
+
+// actualitza cel·la: resta en 1 el valor actual de la cel·la
+function update_cell(copy_cluesgrid, i, j, cell) {
+	//console.log("    i=", i, "j=", j);
 	
-	if (first_access) {
-		//console.log("First access");
-		
-		// letters in today's paraulogic
-		get_letters();
-		//console.log("Lletres del dia:", all_letters);
-		//console.log("Lletres del dia:", map_letters);
-		
-		// number of rows of cluesgrid
-		num_rows = map_letters.size + 1;
-		//console.log("num_rows=", num_rows);
-		
-		// initialize grid
-		make_clustergrid();
-		num_cols = cluesgrid[0].length;
-		
-		//console.log("cluesgrid:", cluesgrid);
-		//console.log("num_cols=", num_cols);
-		
-		retrieve_all_words_first_time();
-		//console.log("all_words=", all_words);
-		
-		first_access = false;
-	}
+	//console.log("    count=", copy_cluesgrid[i][j]);
+	--copy_cluesgrid[i][j];
+	//console.log("    count=", copy_cluesgrid[i][j]);
 	
-	{
-	const num_words_from_page = get_num_words_from_page();
-	if (num_words_from_page != all_words.length) {
-		//console.log("all_words.length=", all_words.length);
-		//console.log("get_num_words_from_page()=", num_words_from_page);
-		//console.log("Time to update 'all_words'");
-		
-		retrieve_all_words_nth_time(num_words_from_page);
-		
-		//console.log("all_words=", all_words);
-	}
-	}
-	
+	cell.childNodes[0].textContent = copy_cluesgrid[i][j];
+}
+
+function update_grid() {
 	// deep copy 'cluesgrid'
 	var copy = clone_grid();
 	
@@ -383,5 +371,76 @@ function update_cluesgrid(event) {
 	//console.log("copy_cluesgrid:", copy);
 }
 
-document.getElementById("pistes-link").addEventListener('click', update_cluesgrid);
+function update_prefixes() {
+	var copy = new Map(map_prefixes);
+	
+	// first update all counts
+	for (var i = 0; i < all_words.length; ++i) {
+		var word = all_words[i];
+		//console.log("updating prefixes with word:", word);
+		
+		var prefix = word[0] + word[1];
+		copy.set(prefix, copy.get(prefix) - 1);
+	}
+	
+	// make string and update
+	var contents = "\n          <b class=\"pistes\">Començaments de paraula recurrents:</b>\n        ";
+	
+	for (const [key, value] of copy) {
+		contents += key + "-" + value + " ";
+	}
+	
+	var prefix2 = document.getElementById("prefix2");
+	prefix2.innerHTML = contents;
+}
+
+/// Function called for every click to the 'Clues' "button"
+function update_clues(event) {
+	
+	if (first_access) {
+		//console.log("First access");
+		
+		// letters in today's paraulogic
+		get_letters();
+		//console.log("Lletres del dia:", all_letters);
+		//console.log("Lletres del dia:", map_letters);
+		
+		// number of rows of cluesgrid
+		num_rows = map_letters.size + 1;
+		//console.log("num_rows=", num_rows);
+		
+		// initialize grid
+		make_clustergrid();
+		num_cols = cluesgrid[0].length;
+		
+		//console.log("cluesgrid:", cluesgrid);
+		//console.log("num_cols=", num_cols);
+		
+		retrieve_all_words_first_time();
+		//console.log("all_words=", all_words);
+		
+		get_prefixes();
+		//console.log("map_prefixes=", map_prefixes);
+		
+		first_access = false;
+	}
+	
+	{
+	const num_words_from_page = get_num_words_from_page();
+	if (num_words_from_page != all_words.length) {
+		//console.log("all_words.length=", all_words.length);
+		//console.log("get_num_words_from_page()=", num_words_from_page);
+		//console.log("Time to update 'all_words'");
+		
+		retrieve_all_words_nth_time(num_words_from_page);
+		
+		//console.log("all_words=", all_words);
+	}
+	}
+	
+	update_grid();
+	update_prefixes();
+}
+
+document.getElementById("pistes-link").addEventListener('click', update_clues);
 
