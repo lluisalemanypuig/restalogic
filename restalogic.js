@@ -384,14 +384,14 @@ function update_prefixes() {
 	}
 	
 	// make string and update
-	var contents = "\n          <b class=\"pistes\">Començaments de paraula recurrents:</b>\n        ";
+	var contents = "\n          Començaments de paraula recurrents:\n        ";
 	
 	for (const [key, value] of copy) {
 		contents += key + "-" + value + " ";
 	}
 	
 	var prefix2 = document.getElementById("prefix2");
-	prefix2.innerHTML = contents;
+	prefix2.textContent = contents;
 }
 
 /// Function called for every click to the 'Clues' "button"
