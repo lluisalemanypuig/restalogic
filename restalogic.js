@@ -67,14 +67,16 @@ function from_accent_to_nonaccent(c) {
 	// 'remove' the accent from the character
 	if (c == 'à' || c == 'á') { return 'a'; }
 	if (c == 'è' || c == 'é') { return 'e'; }
-	if (c == 'ì' || c == 'í') { return 'i'; }
+	if (c == 'ì' || c == 'í' || c == "ï") { return 'i'; }
 	if (c == 'ò' || c == 'ó') { return 'o'; }
-	if (c == 'ù' || c == 'ú') { return 'u'; }
+	if (c == 'ù' || c == 'ú' || c == "ü") { return 'u'; }
 	// keep the character as it is
 	return c;
 }
 
 function normalize_word(word) {
+	if (word == "en pac de") { return "pac"; }
+	
 	var new_word = "";
 	for (var i = 0; i < word.length; ++i) {
 		new_word += from_accent_to_nonaccent(word[i]);
@@ -142,7 +144,7 @@ function retrieve_all_words_first_time() {
 			const word = children[i].textContent;
 			const normal_word = normalize_word(word);
 			
-			//console.log(i, word, "->", normal_word, ":", word_length(word));
+			//console.log(i, word, "->", normal_word, ":", word_length(normal_word));
 			
 			all_words.push(normal_word);
 			
