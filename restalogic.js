@@ -65,11 +65,11 @@ function get_num_words_from_page() {
 
 function from_accent_to_nonaccent(c) {
 	// 'remove' the accent from the character
-	if (c == 'à' || c == 'á') { return 'a'; }
-	if (c == 'è' || c == 'é') { return 'e'; }
-	if (c == 'ì' || c == 'í' || c == "ï") { return 'i'; }
-	if (c == 'ò' || c == 'ó') { return 'o'; }
-	if (c == 'ù' || c == 'ú' || c == "ü") { return 'u'; }
+	if (c == 'à' || c == 'á'             ) { return 'a'; }
+	if (c == 'è' || c == 'é'             ) { return 'e'; }
+	if (c == 'í' || c == 'ï' || c == 'ì' ) { return 'i'; }
+	if (c == 'ò' || c == 'ó'             ) { return 'o'; }
+	if (c == 'ú' || c == 'ü' || c == 'ù' ) { return 'u'; }
 	// keep the character as it is
 	return c;
 }
