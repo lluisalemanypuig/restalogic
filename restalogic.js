@@ -75,6 +75,7 @@ function from_accent_to_nonaccent(c) {
 }
 
 function normalize_word(word) {
+	if (word == "a palpes") { return "palpes"; }
 	if (word == "en pac de") { return "pac"; }
 	
 	var new_word = "";
