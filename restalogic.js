@@ -54,6 +54,9 @@ function word_length(str) {
 		if (str[i] == "-") {
 			--length;
 		}
+		if (str[i] == "·") {
+			--length;
+		}
 	}
 	return length;
 }
@@ -77,6 +80,13 @@ function from_accent_to_nonaccent(c) {
 function normalize_word(word) {
 	if (word == "a palpes") { return "palpes"; }
 	if (word == "en pac de") { return "pac"; }
+	
+	{
+	const i = word.indexOf("-se");
+	if (i !== -1) {
+		word = word.substring(0, i);
+	}
+	}
 	
 	var new_word = "";
 	for (var i = 0; i < word.length; ++i) {
@@ -122,6 +132,9 @@ function update_cell_prefixes(word) {
  * - 'map_letters' is set
  */
 function retrieve_all_words_first_time() {
+	//console.log("=====================");
+	//console.log("Retrieve all words first time");
+	
 	var discovered_text = document.getElementById("discovered-text");
 	var children = discovered_text.childNodes;
 	
@@ -162,6 +175,7 @@ function retrieve_all_words_first_time() {
  */
 function retrieve_all_words_nth_time(goal_num_words) {
 	//console.log("=====================");
+	//console.log("Retrieve all words nth time");
 	
 	var discovered_text = document.getElementById("discovered-text");
 	
@@ -187,10 +201,10 @@ function retrieve_all_words_nth_time(goal_num_words) {
 		
 		if (i < children.length) {
 			
-			//console.log(i, children[i].textContent, children[i].textContent.length);
-			
 			const word = children[i].textContent;
 			const normal_word = normalize_word(word);
+			
+			//console.log(i, word, "->", normal_word, ":", word_length(normal_word));
 			
 			//console.log("----------------");
 			//console.log("word=", word);
@@ -203,6 +217,8 @@ function retrieve_all_words_nth_time(goal_num_words) {
 				//console.log("    continue");
 			}
 			else {
+				
+				//console.log(" ***", i, word, "->", normal_word, ":", word_length(normal_word));
 				
 				if (j == all_words.length) {
 					// push new word at the end of the array
