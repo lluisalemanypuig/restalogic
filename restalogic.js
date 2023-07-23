@@ -81,6 +81,7 @@ function normalize_word(word) {
 	if (word == "a palpes") { return "palpes"; }
 	if (word == "en pac de") { return "pac"; }
 	if (word == "en vist") { return "vist"; }
+	if (word == "de reüll") { return "reull"; }
 	
 	{
 	const i = word.indexOf("-se");
