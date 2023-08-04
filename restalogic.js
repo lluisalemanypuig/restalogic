@@ -100,9 +100,10 @@ function from_accent_to_nonaccent(c) {
 function normalize_word(word) {
 	if (word == "a la par") { return "par"; }
 	if (word == "a palpes") { return "palpes"; }
+	if (word == "de gom a gom") { return "gom"; }
+	if (word == "de reüll") { return "reull"; }
 	if (word == "en pac de") { return "pac"; }
 	if (word == "en vist") { return "vist"; }
-	if (word == "de reüll") { return "reull"; }
 	
 	{
 	const i = word.indexOf("-se");
