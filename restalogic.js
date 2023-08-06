@@ -99,6 +99,7 @@ function from_accent_to_nonaccent(c) {
 
 function normalize_word(word) {
 	if (word == "a la par") { return "par"; }
+	if (word == "a la xirinxina") { return "xirinxina"; }
 	if (word == "a palpes") { return "palpes"; }
 	if (word == "de gom a gom") { return "gom"; }
 	if (word == "de reüll") { return "reull"; }
