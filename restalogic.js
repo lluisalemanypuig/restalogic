@@ -126,7 +126,7 @@ function update_cell_cluesgrid(word) {
 	
 	var i = index_initial - 1;
 	var j = index_length - 1;
-	//console.log("Update cell", i, j);
+	//~ console.log("Update cell", i, j);
 	
 	// update cell corresponding to the word
 	--cluesgrid[i][j];
@@ -156,8 +156,8 @@ function update_cell_prefixes(word) {
  * - 'map_letters' is set
  */
 function retrieve_all_words_first_time() {
-	//console.log("=====================");
-	//console.log("Retrieve all words first time");
+	//~ console.log("=====================");
+	//~ console.log("Retrieve all words first time");
 	
 	var discovered_text = document.getElementById("discovered-text");
 	var children = discovered_text.childNodes;
@@ -182,7 +182,7 @@ function retrieve_all_words_first_time() {
 			const word = children[i].textContent;
 			const normal_word = normalize_word(word);
 			
-			//console.log(i, word, "->", normal_word, ":", word_length(normal_word));
+			//~ console.log(i, word, "->", normal_word, ":", word_length(normal_word));
 			
 			all_words.push(normal_word);
 			
@@ -198,8 +198,8 @@ function retrieve_all_words_first_time() {
  * @pre This assumes the array 'all_words' already contains words
  */
 function retrieve_all_words_nth_time(goal_num_words) {
-	//console.log("=====================");
-	//console.log("Retrieve all words nth time");
+	//~ console.log("=====================");
+	//~ console.log("Retrieve all words nth time");
 	
 	var discovered_text = document.getElementById("discovered-text");
 	
@@ -228,21 +228,21 @@ function retrieve_all_words_nth_time(goal_num_words) {
 			const word = children[i].textContent;
 			const normal_word = normalize_word(word);
 			
-			//console.log(i, word, "->", normal_word, ":", word_length(normal_word));
+			//~ console.log(i, word, "->", normal_word, ":", word_length(normal_word));
 			
-			//console.log("----------------");
-			//console.log("word=", word);
-			//console.log("normal_word=", normal_word);
-			//console.log("j=", j);
-			//console.log("all_words[j]=", all_words[j]);
+			//~ console.log("----------------");
+			//~ console.log("word=", word);
+			//~ console.log("normal_word=", normal_word);
+			//~ console.log("j=", j);
+			//~ console.log("all_words[j]=", all_words[j]);
 			
 			if (normal_word == all_words[j]) {
 				++j;
-				//console.log("    continue");
+				//~ console.log("    continue");
 			}
 			else {
 				
-				//console.log(" ***", i, word, "->", normal_word, ":", word_length(normal_word));
+				//~ console.log(" ***", i, word, "->", normal_word, ":", word_length(normal_word));
 				
 				if (j == all_words.length) {
 					// push new word at the end of the array
@@ -261,12 +261,12 @@ function retrieve_all_words_nth_time(goal_num_words) {
 						update_cell_cluesgrid(normal_word);
 						update_cell_prefixes(normal_word);
 						++j;
-						//console.log("    all_words=", all_words);
+						//~ console.log("    all_words=", all_words);
 					}
 				}
 				
 				if (all_words.length == goal_num_words) {
-					//console.log("    break");
+					//~ console.log("    break");
 					break;
 				}
 			}
@@ -279,7 +279,7 @@ function retrieve_all_words_nth_time(goal_num_words) {
  */
 function get_letters() {
 	var hex_grid = document.getElementById("hex-grid");
-	//console.log(hex_grid);
+	//~ console.log(hex_grid);
 	
 	for (var i = 0; i < 7; ++i) {
 		var lletra = hex_grid.childNodes[i].childNodes[0].childNodes[0].textContent;
@@ -302,7 +302,7 @@ function get_letters() {
  */
 function get_prefixes() {
 	var prefix2 = document.getElementById("prefix2");
-	//console.log(prefix2);
+	//~ console.log(prefix2);
 	
 	var contents = prefix2.textContent.split('\n')[2].split(' ');
 	
@@ -334,42 +334,42 @@ function make_clustergrid() {
 		.getElementsByTagName("tbody");
 	
 	if (cluesgrid_body.length == 0) {
-		//console.log("cluesgrid is not loaded")
+		//~ console.log("cluesgrid is not loaded")
 		return;
 	}
 	
-	//console.log("cluesgrid_body:", cluesgrid_body);
+	//~ console.log("cluesgrid_body:", cluesgrid_body);
 	
 	cluesgrid = new Array(num_rows);
-	//console.log("cluesgrid.length=", cluesgrid.length);
+	//~ console.log("cluesgrid.length=", cluesgrid.length);
 	
 	cluesgrid_body = cluesgrid_body[0];
 	var header = cluesgrid_body.children[0];
-	//console.log("header:", header);
+	//~ console.log("header:", header);
 	
 	min_word_length = str_to_int(header.children[1].textContent);
-	//console.log("min_word_length=", min_word_length);
+	//~ console.log("min_word_length=", min_word_length);
 	
-	//console.log("cluesgrid_body.rows.length=", cluesgrid_body.rows.length);
+	//~ console.log("cluesgrid_body.rows.length=", cluesgrid_body.rows.length);
 	for (var i = 1; i < cluesgrid_body.rows.length; ++i) {
 		cluesgrid[i - 1] = [];
 		
 		var row = cluesgrid_body.children[i];
-		//console.log("i=", i, row);
+		//~ console.log("i=", i, row);
 		
 		for (var j = 1; j < row.childElementCount; ++j) {
 			var cell = row.children[j];
 			
 			if (cell.childNodes[0] != null) {
 				var data = parseInt(cell.childNodes[0].textContent, 10);
-				//console.log( i - 1, data );
+				//~ console.log( i - 1, data );
 				
 				cluesgrid[i - 1].push( data );
 			}
 		}
 	}
 	
-	//console.log(cluesgrid);
+	//~ console.log(cluesgrid);
 }
 
 /* ------------------------------------------------------------------ */
@@ -381,7 +381,7 @@ function update_grid_html() {
 		.getElementsByTagName("tbody");
 	
 	if (cluesgrid_body.length == 0) {
-		//console.log("cluesgrid is not loaded")
+		//~ console.log("cluesgrid is not loaded")
 		return;
 	}
 	
@@ -389,8 +389,8 @@ function update_grid_html() {
 	var header = cluesgrid_body.getElementsByTagName("tr")[0];
 	var bottom = cluesgrid_body.getElementsByTagName("tr")[num_rows];
 	
-	//console.log("header:", header);
-	//console.log("bottom:", bottom);
+	//~ console.log("header:", header);
+	//~ console.log("bottom:", bottom);
 	
 	for (var i = 0; i < num_rows; ++i) {
 		for (var j = 0; j < num_cols; ++j) {
@@ -419,30 +419,30 @@ function update_prefixes_html() {
 function update_clues(event) {
 	
 	if (first_access) {
-		//console.log("First access");
+		//~ console.log("First access");
 		
 		// letters in today's paraulogic
 		get_letters();
-		//console.log("Lletres del dia:", all_letters);
-		//console.log("Lletres del dia:", map_letters);
+		//~ console.log("Lletres del dia:", all_letters);
+		//~ console.log("Lletres del dia:", map_letters);
 		
 		// number of rows of cluesgrid
 		num_rows = map_letters.size + 1;
-		//console.log("num_rows=", num_rows);
+		//~ console.log("num_rows=", num_rows);
 		
 		// initialize grid
 		make_clustergrid();
 		num_cols = cluesgrid[0].length;
 		
-		//console.log("cluesgrid:", cluesgrid);
-		//console.log("num_cols=", num_cols);
+		//~ console.log("cluesgrid:", cluesgrid);
+		//~ console.log("num_cols=", num_cols);
 		
 		get_prefixes();
-		//console.log("map_prefixes=", map_prefixes);
+		//~ console.log("map_prefixes=", map_prefixes);
 		
 		retrieve_all_words_first_time();
-		//console.log("all_words=", all_words);
-		//console.log("cluesgrid:", cluesgrid);
+		//~ console.log("all_words=", all_words);
+		//~ console.log("cluesgrid:", cluesgrid);
 		
 		first_access = false;
 	}
@@ -450,14 +450,14 @@ function update_clues(event) {
 	{
 	const num_words_from_page = get_num_words_from_page();
 	if (num_words_from_page != all_words.length) {
-		//console.log("all_words.length=", all_words.length);
-		//console.log("get_num_words_from_page()=", num_words_from_page);
-		//console.log("Time to update 'all_words'");
+		//~ console.log("all_words.length=", all_words.length);
+		//~ console.log("get_num_words_from_page()=", num_words_from_page);
+		//~ console.log("Time to update 'all_words'");
 		
 		retrieve_all_words_nth_time(num_words_from_page);
 		
-		//console.log("all_words=", all_words);
-		//console.log("cluesgrid:", cluesgrid);
+		//~ console.log("all_words=", all_words);
+		//~ console.log("cluesgrid:", cluesgrid);
 	}
 	}
 	
