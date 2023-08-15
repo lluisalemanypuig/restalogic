@@ -104,7 +104,7 @@ var normalization_table = {
 	"a palpes" : "palpes",
 	"de filis" : "filis",
 	"de gom a gom" : "gom",
-	"de reüll" : "reüll",
+	"de reüll" : "reull",
 	"en pac de" : "pac",
 	"en vist" : "vist",
 };
