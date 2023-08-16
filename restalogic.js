@@ -51,10 +51,7 @@ function str_to_int(str) {
 function word_length(str) {
 	var length = str.length;
 	for (var i = 0; i < str.length; ++i) {
-		if (str[i] == "-" or 
-			str[i] == "·"
-		)
-		{
+		if (str[i] == "-" || str[i] == "·") {
 			--length;
 		}
 	}
