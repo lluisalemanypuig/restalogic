@@ -36,8 +36,10 @@ var min_word_length = -1;
 var map_letters = null;
 var all_letters = [];
 
-/// Mapping of 2-letter prefixes to their counts
-var map_prefixes = null;
+/// Mapping of prefixes and suffixes to their counts
+var map_prefixes_2 = null;
+var map_prefixes_3 = null;
+var map_suffixes_3 = null;
 
 /// Words found by the user
 var all_words = [];
@@ -148,9 +150,30 @@ function update_cell_cluesgrid(word) {
 	--cluesgrid[num_rows - 1][num_cols - 1];
 }
 
-function update_cell_prefixes(word) {
+function update_cell_prefixes_2(word) {
 	var prefix = word[0] + word[1];
-	map_prefixes.set(prefix, map_prefixes.get(prefix) - 1);
+	map_prefixes_2.set(prefix, map_prefixes_2.get(prefix) - 1);
+}
+
+function update_cell_prefixes_3(word) {
+	var prefix = word[0] + word[1] + word[2];
+	if (map_prefixes_3.has(prefix)) {
+		map_prefixes_3.set(prefix, map_prefixes_3.get(prefix) - 1);
+	}
+}
+
+function update_cell_suffixes_3(word) {
+	var length = word.length;
+	var suffix = word[length - 3] + word[length - 2] + word[length - 1];
+	if (map_suffixes_3.has(suffix)) {
+		map_suffixes_3.set(suffix, map_suffixes_3.get(suffix) - 1);
+	}
+}
+
+function update_cell_prefixes_suffixes(word) {
+	update_cell_prefixes_2(word);
+	update_cell_prefixes_3(word);
+	update_cell_suffixes_3(word);
 }
 
 /* ----------------------------------------------- */
@@ -195,7 +218,7 @@ function retrieve_all_words_first_time() {
 			all_words.push(normal_word);
 			
 			update_cell_cluesgrid(normal_word);
-			update_cell_prefixes(normal_word);
+			update_cell_prefixes_suffixes(normal_word);
 		}
 	}
 }
@@ -256,7 +279,7 @@ function retrieve_all_words_nth_time(goal_num_words) {
 					// push new word at the end of the array
 					all_words.push(normal_word);
 					update_cell_cluesgrid(normal_word);
-					update_cell_prefixes(normal_word);
+					update_cell_prefixes_suffixes(normal_word);
 					++j;
 				}
 				else {
@@ -267,7 +290,7 @@ function retrieve_all_words_nth_time(goal_num_words) {
 					if (comp > 0) {
 						all_words.splice(j, 0, normal_word);
 						update_cell_cluesgrid(normal_word);
-						update_cell_prefixes(normal_word);
+						update_cell_prefixes_suffixes(normal_word);
 						++j;
 						//~ console.log("    all_words=", all_words);
 					}
@@ -304,11 +327,7 @@ function get_letters() {
 	}
 }
 
-/**
- * Retrieves all the prefixes in the clues. Also retrieves the countings
- * of each prefix.
- */
-function get_prefixes() {
+function get_prefixes_2() {
 	var prefix2 = document.getElementById("prefix2");
 	//~ console.log(prefix2);
 	
@@ -317,12 +336,56 @@ function get_prefixes() {
 	var i = 0;
 	while (i < contents.length && contents[i] == '') { ++i; }
 	
-	map_prefixes = new Map();
+	map_prefixes_2 = new Map();
 	while (i < contents.length && contents[i] != '') {
 		var prefix_count = contents[i].split('-');
-		map_prefixes.set(prefix_count[0], str_to_int(prefix_count[1]));
+		map_prefixes_2.set(prefix_count[0], str_to_int(prefix_count[1]));
 		++i;
 	}
+}
+
+function get_prefixes_3() {
+	var prefix3 = document.getElementById("prefix3");
+	//~ console.log(prefix3);
+	
+	var contents = prefix3.textContent.split('\n')[2].split(' ');
+	
+	var i = 0;
+	while (i < contents.length && contents[i] == '') { ++i; }
+	
+	map_prefixes_3 = new Map();
+	while (i < contents.length && contents[i] != '') {
+		var prefix_count = contents[i].split('-');
+		map_prefixes_3.set(prefix_count[0], str_to_int(prefix_count[1]));
+		++i;
+	}
+}
+
+function get_suffixes_3() {
+	var suffix3 = document.getElementById("sufix3");
+	//~ console.log(suffix3);
+	
+	var contents = suffix3.textContent.split('\n')[2].split(' ');
+	
+	var i = 0;
+	while (i < contents.length && contents[i] == '') { ++i; }
+	
+	map_suffixes_3 = new Map();
+	while (i < contents.length && contents[i] != '') {
+		var suffix_count = contents[i].split('-');
+		map_suffixes_3.set(suffix_count[0], str_to_int(suffix_count[1]));
+		++i;
+	}
+}
+
+/**
+ * Retrieves all the prefixes in the clues. Also retrieves the countings
+ * of each prefix.
+ */
+function get_prefixes_suffixes() {
+	get_prefixes_2();
+	get_prefixes_3();
+	get_suffixes_3();
 }
 
 /**
@@ -384,7 +447,7 @@ function make_clustergrid() {
 
 function update_grid_html() {
 	// 'cluesgrid' object
-	var cluesgrid_body =
+	var cluesgrid_body = 
 		document.getElementById("table_graella")
 		.getElementsByTagName("tbody");
 	
@@ -411,15 +474,43 @@ function update_grid_html() {
 	}
 }
 
-function update_prefixes_html() {
+function update_prefixes_2_html() {
 	// make string and update
 	var contents = "";
 	
-	for (const [key, value] of map_prefixes) {
+	for (const [key, value] of map_prefixes_2) {
 		contents += key + "-" + value + " ";
 	}
 	
 	document.getElementById("prefix2").children[0].nextSibling.textContent = contents;
+}
+
+function update_prefixes_3_html() {
+	// make string and update
+	var contents = "";
+	
+	for (const [key, value] of map_prefixes_3) {
+		contents += key + "-" + value + " ";
+	}
+	
+	document.getElementById("prefix3").children[0].nextSibling.textContent = contents;
+}
+
+function update_suffixes_3_html() {
+	// make string and update
+	var contents = "";
+	
+	for (const [key, value] of map_suffixes_3) {
+		contents += key + "-" + value + " ";
+	}
+	
+	document.getElementById("sufix3").children[0].nextSibling.textContent = contents;
+}
+
+function update_prefixes_suffixes_html() {
+	update_prefixes_2_html();
+	update_prefixes_3_html();
+	update_suffixes_3_html();
 }
 
 /// Function called for every click to the 'Clues' "button"
@@ -444,9 +535,11 @@ function update_clues(event) {
 		//~ console.log("cluesgrid:", cluesgrid);
 		//~ console.log("num_cols=", num_cols);
 		
-		get_prefixes();
-		//~ console.log("map_prefixes=", map_prefixes);
+		// retrieve all prefixes
+		get_prefixes_suffixes();
+		//~ console.log("map_prefixes_2=", map_prefixes_2);
 		
+		// retrieve the words found by the user
 		retrieve_all_words_first_time();
 		//~ console.log("all_words=", all_words);
 		//~ console.log("cluesgrid:", cluesgrid);
@@ -469,7 +562,7 @@ function update_clues(event) {
 	}
 	
 	update_grid_html();
-	update_prefixes_html();
+	update_prefixes_suffixes_html();
 }
 
 document.getElementById("pistes-link").addEventListener('click', update_clues);
