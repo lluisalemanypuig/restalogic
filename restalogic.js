@@ -182,9 +182,19 @@ function update_cell_prefixes_suffixes(word) {
  * Retrieve all words found by the user.
  * 
  * @pre This assumes:
- * - 'all_words' is empty
- * - all values in 'cluesgrid' are set
- * - 'map_letters' is set
+ * - array 'all_words' is empty
+ * - all values are set in
+ * 		- 'cluesgrid'
+ * 		- 'map_letters'
+ * 		- 'map_prefixes_2'
+ * 		- 'map_prefixes_3'
+ * 		- 'map_suffixes_3'
+ * @post All of the following are updated:
+ * 		- 'cluesgrid'
+ * 		- 'map_letters'
+ * 		- 'map_prefixes_2'
+ * 		- 'map_prefixes_3'
+ * 		- 'map_suffixes_3'
  */
 function retrieve_all_words_first_time() {
 	//~ console.log("=====================");
@@ -226,7 +236,19 @@ function retrieve_all_words_first_time() {
 /**
  * Completes the array 'all_words' by inserting the new words
  * 
- * @pre This assumes the array 'all_words' already contains words
+ * @pre This assumes that the array 'all_words' already contains words.
+ * Also, all values are set in
+ * 		- 'cluesgrid'
+ * 		- 'map_letters'
+ * 		- 'map_prefixes_2'
+ * 		- 'map_prefixes_3'
+ * 		- 'map_suffixes_3'
+ * @post All of the following are updated:
+ * 		- 'cluesgrid'
+ * 		- 'map_letters'
+ * 		- 'map_prefixes_2'
+ * 		- 'map_prefixes_3'
+ * 		- 'map_suffixes_3'
  */
 function retrieve_all_words_nth_time(goal_num_words) {
 	//~ console.log("=====================");
@@ -327,6 +349,9 @@ function get_letters() {
 	}
 }
 
+/**
+ * Retrieves all prefixes of length 2.
+ */
 function get_prefixes_2() {
 	var prefix2 = document.getElementById("prefix2");
 	//~ console.log(prefix2);
@@ -344,6 +369,9 @@ function get_prefixes_2() {
 	}
 }
 
+/**
+ * Retrieves all prefixes of length 3.
+ */
 function get_prefixes_3() {
 	var prefix3 = document.getElementById("prefix3");
 	//~ console.log(prefix3);
@@ -361,6 +389,9 @@ function get_prefixes_3() {
 	}
 }
 
+/**
+ * Retrieves all suffixes of length 3.
+ */
 function get_suffixes_3() {
 	var suffix3 = document.getElementById("sufix3");
 	//~ console.log(suffix3);
@@ -380,7 +411,7 @@ function get_suffixes_3() {
 
 /**
  * Retrieves all the prefixes in the clues. Also retrieves the countings
- * of each prefix.
+ * of each prefix and suffix.
  */
 function get_prefixes_suffixes() {
 	get_prefixes_2();
