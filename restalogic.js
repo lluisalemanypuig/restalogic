@@ -384,7 +384,7 @@ function make_clustergrid() {
 
 function update_grid_html() {
 	// 'cluesgrid' object
-	var cluesgrid_body = 
+	var cluesgrid_body =
 		document.getElementById("table_graella")
 		.getElementsByTagName("tbody");
 	
@@ -413,14 +413,13 @@ function update_grid_html() {
 
 function update_prefixes_html() {
 	// make string and update
-	var contents = "\n          Començaments de paraula recurrents:\n        ";
+	var contents = "";
 	
 	for (const [key, value] of map_prefixes) {
 		contents += key + "-" + value + " ";
 	}
 	
-	var prefix2 = document.getElementById("prefix2");
-	prefix2.textContent = contents;
+	document.getElementById("prefix2").children[0].nextSibling.textContent = contents;
 }
 
 /// Function called for every click to the 'Clues' "button"
