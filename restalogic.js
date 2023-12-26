@@ -118,17 +118,20 @@ var normalization_table = {
 
 function normalize_word(word) {
 	{
+	// normalize a word using a normalization table
 	const norm_word = normalization_table[word];
 	if (norm_word) { return norm_word; }
 	}
 	
 	{
+	// remove suffix "-se"
 	const i = word.indexOf("-se");
 	if (i !== -1) {
 		word = word.substring(0, i);
 	}
 	}
 	
+	// normalize all accents and remove special characters
 	var new_word = "";
 	for (var i = 0; i < word.length; ++i) {
 		new_word += from_accent_to_nonaccent(word[i]);
