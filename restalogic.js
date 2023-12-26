@@ -93,6 +93,7 @@ function from_accent_to_nonaccent(c) {
 		case "ú":
 			return "u";
 		
+		case "-":
 		case "·":
 			return "";
 		
