@@ -152,10 +152,12 @@ function get_letters() {
 	
 	all_letters.sort();
 	
-	map_letters = new Map();
+	var _map_letters = new Map();
 	for (var i = 0; i < all_letters.length; ++i) {
-		map_letters.set(all_letters[i], i + 1);
+		_map_letters.set(all_letters[i], i + 1);
 	}
+	
+	map_letters = new Map([..._map_letters.entries()].sort());
 }
 
 /**
@@ -170,12 +172,14 @@ function get_prefixes_2() {
 	var i = 0;
 	while (i < contents.length && contents[i] == '') { ++i; }
 	
-	map_prefixes_2 = new Map();
+	_map_prefixes_2 = new Map();
 	while (i < contents.length && contents[i] != '') {
 		var prefix_count = contents[i].split('-');
-		map_prefixes_2.set(prefix_count[0], str_to_int(prefix_count[1]));
+		_map_prefixes_2.set(prefix_count[0], str_to_int(prefix_count[1]));
 		++i;
 	}
+	
+	map_prefixes_2 = new Map([..._map_prefixes_2.entries()].sort());
 }
 
 /**
@@ -190,12 +194,14 @@ function get_prefixes_3() {
 	var i = 0;
 	while (i < contents.length && contents[i] == '') { ++i; }
 	
-	map_prefixes_3 = new Map();
+	var _map_prefixes_3 = new Map();
 	while (i < contents.length && contents[i] != '') {
 		var prefix_count = contents[i].split('-');
-		map_prefixes_3.set(prefix_count[0], str_to_int(prefix_count[1]));
+		_map_prefixes_3.set(prefix_count[0], str_to_int(prefix_count[1]));
 		++i;
 	}
+	
+	map_prefixes_3 = new Map([..._map_prefixes_3.entries()].sort());
 }
 
 /**
@@ -210,12 +216,14 @@ function get_suffixes_3() {
 	var i = 0;
 	while (i < contents.length && contents[i] == '') { ++i; }
 	
-	map_suffixes_3 = new Map();
+	var _map_suffixes_3 = new Map();
 	while (i < contents.length && contents[i] != '') {
 		var suffix_count = contents[i].split('-');
-		map_suffixes_3.set(suffix_count[0], str_to_int(suffix_count[1]));
+		_map_suffixes_3.set(suffix_count[0], str_to_int(suffix_count[1]));
 		++i;
 	}
+	
+	map_suffixes_3 = new Map([..._map_suffixes_3.entries()].sort());
 }
 
 /**
@@ -237,12 +245,14 @@ function get_subsets() {
 	var i = 0;
 	while (i < contents.length && contents[i] == '') { ++i; }
 	
-	map_subsets = new Map();
+	var _map_subsets = new Map();
 	while (i < contents.length && contents[i] != '') {
 		var subset_count = contents[i].split('-');
-		map_subsets.set(subset_count[0], str_to_int(subset_count[1]));
+		_map_subsets.set(subset_count[0], str_to_int(subset_count[1]));
 		++i;
 	}
+	
+	map_subsets = new Map([..._map_subsets.entries()].sort());
 }
 
 /**
@@ -325,8 +335,10 @@ function update_cell_cluesgrid(word) {
 
 function update_cell_prefixes_2(word) {
 	var prefix = word[0] + word[1];
-	var new_count = map_prefixes_2.get(prefix) - 1;
-	map_prefixes_2.set(prefix, new_count);
+	if (map_prefixes_2.has(prefix)) {
+		var new_count = map_prefixes_2.get(prefix) - 1;
+		map_prefixes_2.set(prefix, new_count);
+	}
 }
 
 function update_cell_prefixes_3(word) {
