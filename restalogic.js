@@ -71,30 +71,30 @@ function get_num_words_from_page() {
 function from_accent_to_nonaccent(c) {
 	// 'remove' the accent from the character
 	switch (c) {
-		case 'à':
-		case 'á':
-			return 'a';
+		case "à":
+		case "á":
+			return "a";
 		
-		case 'è':
-		case 'é':
-			return 'e';
+		case "è":
+		case "é":
+			return "e";
 		
-		case 'ì':
-		case 'í':
-		case 'ï':
-			return 'i';
+		case "ì":
+		case "í":
+		case "ï":
+			return "i";
 		
-		case 'ò':
-		case 'ó':
-			return 'o';
+		case "ò":
+		case "ó":
+			return "o";
 		
-		case 'ù':
-		case 'ü':
-		case 'ú':
-			return 'u';
+		case "ù":
+		case "ü":
+		case "ú":
+			return "u";
 		
-		case '·':
-			return '';
+		case "·":
+			return "";
 		
 		// keep the character as it is
 		default:
@@ -114,6 +114,7 @@ var normalization_table = {
 	"en vist" : "vist",
 };
 
+/* ------------------------------------------------------------------ */
 
 function normalize_word(word) {
 	{
@@ -133,216 +134,6 @@ function normalize_word(word) {
 		new_word += from_accent_to_nonaccent(word[i]);
 	}
 	return new_word;
-}
-
-function update_cell_cluesgrid(word) {
-	const initial = word[0];
-	var index_initial = map_letters.get(initial);
-	var index_length = (word_length(word) - min_word_length) + 1;
-	
-	var i = index_initial - 1;
-	var j = index_length - 1;
-	//~ console.log("Update cell", i, j);
-	
-	// update cell corresponding to the word
-	--cluesgrid[i][j];
-	// update cell corresponding to the total amount
-	// of words starting with the initial
-	--cluesgrid[i][num_cols - 1];
-	// update cell corresponding to the total amount
-	// of words of this length
-	--cluesgrid[num_rows - 1][j];
-	// update cell corresponding to the total amount of words
-	--cluesgrid[num_rows - 1][num_cols - 1];
-}
-
-function update_cell_prefixes_2(word) {
-	var prefix = word[0] + word[1];
-	map_prefixes_2.set(prefix, map_prefixes_2.get(prefix) - 1);
-}
-
-function update_cell_prefixes_3(word) {
-	var prefix = word[0] + word[1] + word[2];
-	if (map_prefixes_3.has(prefix)) {
-		map_prefixes_3.set(prefix, map_prefixes_3.get(prefix) - 1);
-	}
-}
-
-function update_cell_suffixes_3(word) {
-	var length = word.length;
-	var suffix = word[length - 3] + word[length - 2] + word[length - 1];
-	if (map_suffixes_3.has(suffix)) {
-		map_suffixes_3.set(suffix, map_suffixes_3.get(suffix) - 1);
-	}
-}
-
-function update_cell_prefixes_suffixes(word) {
-	update_cell_prefixes_2(word);
-	update_cell_prefixes_3(word);
-	update_cell_suffixes_3(word);
-}
-
-function update_cell_subsets(word) {
-	var subset = Array.from( new Set(word.split('')) ).sort().join('');
-	map_subsets.set(subset, map_subsets.get(subset) - 1);
-}
-
-/* ----------------------------------------------- */
-
-function update_cells(word) {
-	update_cell_cluesgrid(word);
-	update_cell_prefixes_suffixes(word);
-	update_cell_subsets(word);
-}
-
-/**
- * Retrieve all words found by the user.
- * 
- * @pre This assumes:
- * - array 'all_words' is empty
- * - all values are set in
- * 		- 'cluesgrid'
- * 		- 'map_letters'
- * 		- 'map_prefixes_2'
- * 		- 'map_prefixes_3'
- * 		- 'map_suffixes_3'
- * 		- 'map_subsets'
- * @post All of the following are updated:
- * 		- 'cluesgrid'
- * 		- 'map_letters'
- * 		- 'map_prefixes_2'
- * 		- 'map_prefixes_3'
- * 		- 'map_suffixes_3'
- * 		- 'map_subsets'
- */
-function retrieve_all_words_first_time() {
-	//~ console.log("=====================");
-	//~ console.log("Retrieve all words first time");
-	
-	var discovered_text = document.getElementById("discovered-text");
-	var children = discovered_text.childNodes;
-	
-	var i = 0;
-	
-	while (i < children.length) {
-		
-		while (
-			i < children.length &&
-			children[i].nodeValue != ", " &&
-			children[i].nodeValue != ": " &&
-			children[i].nodeValue != "."
-		)
-		{
-			++i;
-		}
-		
-		++i;
-		
-		if (i < children.length) {
-			const word = children[i].textContent;
-			const normal_word = normalize_word(word);
-			
-			//~ console.log(i, word, "->", normal_word, ":", word_length(normal_word));
-			
-			all_words.push(normal_word);
-			
-			update_cells(normal_word);
-		}
-	}
-}
-
-/**
- * Completes the array 'all_words' by inserting the new words
- * 
- * @pre This assumes that the array 'all_words' already contains words.
- * Also, all values are set in
- * 		- 'cluesgrid'
- * 		- 'map_letters'
- * 		- 'map_prefixes_2'
- * 		- 'map_prefixes_3'
- * 		- 'map_suffixes_3'
- * 		- 'map_subsets'
- * @post All of the following are updated:
- * 		- 'cluesgrid'
- * 		- 'map_letters'
- * 		- 'map_prefixes_2'
- * 		- 'map_prefixes_3'
- * 		- 'map_suffixes_3'
- * 		- 'map_subsets'
- */
-function retrieve_all_words_nth_time(goal_num_words) {
-	//~ console.log("=====================");
-	//~ console.log("Retrieve all words nth time");
-	
-	var discovered_text = document.getElementById("discovered-text");
-	
-	// index over all_words
-	var j = 0;
-	
-	// index over 'children'
-	var i = 0;
-	var children = discovered_text.childNodes;
-	while (i < children.length) {
-		
-		while (
-			i < children.length &&
-			children[i].nodeValue != ", " &&
-			children[i].nodeValue != ": " &&
-			children[i].nodeValue != "."
-		)
-		{
-			++i;
-		}
-		
-		++i;
-		
-		if (i < children.length) {
-			
-			const word = children[i].textContent;
-			const normal_word = normalize_word(word);
-			
-			//~ console.log(i, word, "->", normal_word, ":", word_length(normal_word));
-			
-			//~ console.log("----------------");
-			//~ console.log("word=", word);
-			//~ console.log("normal_word=", normal_word);
-			//~ console.log("j=", j);
-			//~ console.log("all_words[j]=", all_words[j]);
-			
-			if (normal_word == all_words[j]) {
-				++j;
-				//~ console.log("    continue");
-			}
-			else {
-				
-				//~ console.log(" ***", i, word, "->", normal_word, ":", word_length(normal_word));
-				
-				if (j == all_words.length) {
-					// push new word at the end of the array
-					all_words.push(normal_word);
-					update_cells(normal_word);
-					++j;
-				}
-				else {
-					// <0 if "all_words[j] >  words"
-					// =0 if "all_words[j] == words"
-					// >0 if "all_words[j] <  words"
-					const comp = all_words[j].localeCompare(normal_word);
-					if (comp > 0) {
-						all_words.splice(j, 0, normal_word);
-						update_cells(normal_word);
-						++j;
-						//~ console.log("    all_words=", all_words);
-					}
-				}
-				
-				if (all_words.length == goal_num_words) {
-					//~ console.log("    break");
-					break;
-				}
-			}
-		}
-	}
 }
 
 /**
@@ -511,6 +302,222 @@ function make_clustergrid() {
 
 /* ------------------------------------------------------------------ */
 
+function update_cell_cluesgrid(word) {
+	const initial = word[0];
+	var index_initial = map_letters.get(initial);
+	var index_length = (word_length(word) - min_word_length) + 1;
+	
+	var i = index_initial - 1;
+	var j = index_length - 1;
+	//~ console.log("Update cell", i, j);
+	
+	// update cell corresponding to the word
+	--cluesgrid[i][j];
+	// update cell corresponding to the total amount
+	// of words starting with the initial
+	--cluesgrid[i][num_cols - 1];
+	// update cell corresponding to the total amount
+	// of words of this length
+	--cluesgrid[num_rows - 1][j];
+	// update cell corresponding to the total amount of words
+	--cluesgrid[num_rows - 1][num_cols - 1];
+}
+
+function update_cell_prefixes_2(word) {
+	var prefix = word[0] + word[1];
+	var new_count = map_prefixes_2.get(prefix) - 1;
+	map_prefixes_2.set(prefix, new_count);
+}
+
+function update_cell_prefixes_3(word) {
+	var prefix = word[0] + word[1] + word[2];
+	if (map_prefixes_3.has(prefix)) {
+		var new_count = map_prefixes_3.get(prefix) - 1;
+		map_prefixes_3.set(prefix, new_count);
+	}
+}
+
+function update_cell_suffixes_3(word) {
+	var length = word.length;
+	var suffix = word[length - 3] + word[length - 2] + word[length - 1];
+	if (map_suffixes_3.has(suffix)) {
+		var new_count = map_suffixes_3.get(suffix) - 1;
+		map_suffixes_3.set(suffix, new_count);
+	}
+}
+
+function update_cell_prefixes_suffixes(word) {
+	update_cell_prefixes_2(word);
+	update_cell_prefixes_3(word);
+	update_cell_suffixes_3(word);
+}
+
+function update_cell_subsets(word) {
+	var subset = Array.from( new Set(word.split('')) ).sort().join('');
+	var new_count = map_subsets.get(subset) - 1;
+	map_subsets.set(subset, new_count);
+}
+
+function update_cells(word) {
+	update_cell_cluesgrid(word);
+	update_cell_prefixes_suffixes(word);
+	update_cell_subsets(word);
+}
+
+/* ------------------------------------------------------------------ */
+
+/**
+ * Retrieve all words found by the user.
+ * 
+ * @pre This assumes:
+ * - array 'all_words' is empty
+ * - all values are set in
+ * 		- 'cluesgrid'
+ * 		- 'map_letters'
+ * 		- 'map_prefixes_2'
+ * 		- 'map_prefixes_3'
+ * 		- 'map_suffixes_3'
+ * 		- 'map_subsets'
+ * @post All of the following are updated:
+ * 		- 'cluesgrid'
+ * 		- 'map_letters'
+ * 		- 'map_prefixes_2'
+ * 		- 'map_prefixes_3'
+ * 		- 'map_suffixes_3'
+ * 		- 'map_subsets'
+ */
+function retrieve_all_words_first_time() {
+	//~ console.log("=====================");
+	//~ console.log("Retrieve all words first time");
+	
+	var discovered_text = document.getElementById("discovered-text");
+	var children = discovered_text.childNodes;
+	
+	var i = 0;
+	
+	while (i < children.length) {
+		
+		while (
+			i < children.length &&
+			children[i].nodeValue != ", " &&
+			children[i].nodeValue != ": " &&
+			children[i].nodeValue != "."
+		)
+		{
+			++i;
+		}
+		
+		++i;
+		
+		if (i < children.length) {
+			const word = children[i].textContent;
+			const normal_word = normalize_word(word);
+			
+			//~ console.log(i, word, "->", normal_word, ":", word_length(normal_word));
+			
+			all_words.push(normal_word);
+			
+			update_cells(normal_word);
+		}
+	}
+}
+
+/**
+ * Completes the array 'all_words' by inserting the new words
+ * 
+ * @pre This assumes that the array 'all_words' already contains words.
+ * Also, all values are set in
+ * 		- 'cluesgrid'
+ * 		- 'map_letters'
+ * 		- 'map_prefixes_2'
+ * 		- 'map_prefixes_3'
+ * 		- 'map_suffixes_3'
+ * 		- 'map_subsets'
+ * @post All of the following are updated:
+ * 		- 'cluesgrid'
+ * 		- 'map_letters'
+ * 		- 'map_prefixes_2'
+ * 		- 'map_prefixes_3'
+ * 		- 'map_suffixes_3'
+ * 		- 'map_subsets'
+ */
+function retrieve_all_words_nth_time(goal_num_words) {
+	//~ console.log("=====================");
+	//~ console.log("Retrieve all words nth time");
+	
+	var discovered_text = document.getElementById("discovered-text");
+	
+	// index over all_words
+	var j = 0;
+	
+	// index over 'children'
+	var i = 0;
+	var children = discovered_text.childNodes;
+	while (i < children.length) {
+		
+		while (
+			i < children.length &&
+			children[i].nodeValue != ", " &&
+			children[i].nodeValue != ": " &&
+			children[i].nodeValue != "."
+		)
+		{
+			++i;
+		}
+		
+		++i;
+		
+		if (i < children.length) {
+			
+			const word = children[i].textContent;
+			const normal_word = normalize_word(word);
+			
+			//~ console.log(i, word, "->", normal_word, ":", word_length(normal_word));
+			
+			//~ console.log("----------------");
+			//~ console.log("word=", word);
+			//~ console.log("normal_word=", normal_word);
+			//~ console.log("j=", j);
+			//~ console.log("all_words[j]=", all_words[j]);
+			
+			if (normal_word == all_words[j]) {
+				++j;
+				//~ console.log("    continue");
+			}
+			else {
+				
+				//~ console.log(" ***", i, word, "->", normal_word, ":", word_length(normal_word));
+				
+				if (j == all_words.length) {
+					// push new word at the end of the array
+					all_words.push(normal_word);
+					update_cells(normal_word);
+					++j;
+				}
+				else {
+					// <0 if "all_words[j] >  words"
+					// =0 if "all_words[j] == words"
+					// >0 if "all_words[j] <  words"
+					const comp = all_words[j].localeCompare(normal_word);
+					if (comp > 0) {
+						all_words.splice(j, 0, normal_word);
+						update_cells(normal_word);
+						++j;
+						//~ console.log("    all_words=", all_words);
+					}
+				}
+				
+				if (all_words.length == goal_num_words) {
+					//~ console.log("    break");
+					break;
+				}
+			}
+		}
+	}
+}
+
+/* ------------------------------------------------------------------ */
+
 function update_html_grid() {
 	// 'cluesgrid' object
 	var cluesgrid_body = 
@@ -540,7 +547,7 @@ function update_html_grid() {
 	}
 }
 
-function update_prefixes_2_html() {
+function update_html_prefixes_2() {
 	var contents = "";
 	for (const [key, value] of map_prefixes_2) {
 		contents += key + "-" + value + " ";
@@ -548,7 +555,7 @@ function update_prefixes_2_html() {
 	document.getElementById("prefix2").children[0].nextSibling.textContent = contents;
 }
 
-function update_prefixes_3_html() {
+function update_html_prefixes_3() {
 	var contents = "";
 	for (const [key, value] of map_prefixes_3) {
 		contents += key + "-" + value + " ";
@@ -556,7 +563,7 @@ function update_prefixes_3_html() {
 	document.getElementById("prefix3").children[0].nextSibling.textContent = contents;
 }
 
-function update_suffixes_3_html() {
+function update_html_suffixes_3() {
 	var contents = "";
 	for (const [key, value] of map_suffixes_3) {
 		contents += key + "-" + value + " ";
@@ -565,9 +572,9 @@ function update_suffixes_3_html() {
 }
 
 function update_html_prefixes_suffixes() {
-	update_prefixes_2_html();
-	update_prefixes_3_html();
-	update_suffixes_3_html();
+	update_html_prefixes_2();
+	update_html_prefixes_3();
+	update_html_suffixes_3();
 }
 
 function update_html_subsets() {
@@ -578,14 +585,14 @@ function update_html_subsets() {
 	document.getElementById("subconjunts").children[0].nextSibling.textContent = contents;
 }
 
-function update_html() {
+function update_html_clues() {
 	update_html_grid();
 	update_html_prefixes_suffixes();
 	update_html_subsets();
 }
 
 /// Function called for every click to the 'Clues' "button"
-function update_clues(event) {
+function update_html(event) {
 	if (first_access) {
 		//~ console.log("First access");
 		
@@ -635,8 +642,8 @@ function update_clues(event) {
 	}
 	}
 	
-	update_html();
+	update_html_clues();
 }
 
-document.getElementById("pistes-link").addEventListener('click', update_clues);
+document.getElementById("pistes-link").addEventListener('click', update_html);
 
