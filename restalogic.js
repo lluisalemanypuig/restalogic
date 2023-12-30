@@ -104,6 +104,7 @@ function from_accent_to_nonaccent(c) {
 }
 
 var normalization_table = {
+	"al dedins de" : "dedins",
 	"a la babalà" : "babala",
 	"a la par" : "par",
 	"a la xirinxina" : "xirinxina",
