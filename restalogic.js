@@ -114,6 +114,8 @@ var normalization_table = {
 	"de reüll" : "reull",
 	"en pac de" : "pac",
 	"en vist" : "vist",
+	"en off" : "off",
+	"per mor de" : "mor",
 };
 
 /* ------------------------------------------------------------------ */
