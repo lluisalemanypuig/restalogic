@@ -11,7 +11,9 @@
 	},
 	"content_scripts": [
 		{
-			"matches": ["*://www.vilaweb.cat/paraulogic*"],
+			"matches": [
+				"*://www.vilaweb.cat/paraulogic*"
+			],
 			"js": [
 				"restalogic.js"
 			]
