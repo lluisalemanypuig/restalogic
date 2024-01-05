@@ -49,6 +49,14 @@ var all_words = [];
 
 /* ------------------------------------------------------------------ */
 
+function comp_with_broken_c(a, b) {
+	if (a == b) { return 0; }
+	if (a == 'ç') { return (b <= 'c' ? 1 : -1); }
+	if (b == 'ç') { return (a <= 'c' ? -1 : 1); }
+	// the case 'a == b' was dealt with at the beginning of the function
+	return (a < b ? -1 : 1);
+}
+
 function str_to_int(str) {
 	return parseInt(str, 10);
 }
@@ -157,14 +165,14 @@ function get_letters() {
 		}
 	}
 	
-	all_letters.sort();
+	all_letters.sort(comp_with_broken_c);
 	
 	var _map_letters = new Map();
 	for (var i = 0; i < all_letters.length; ++i) {
 		_map_letters.set(all_letters[i], i + 1);
 	}
 	
-	map_letters = new Map([..._map_letters.entries()].sort());
+	map_letters = new Map([..._map_letters.entries()].sort(comp_with_broken_c));
 }
 
 /**
@@ -186,7 +194,7 @@ function get_prefixes_2() {
 		++i;
 	}
 	
-	map_prefixes_2 = new Map([..._map_prefixes_2.entries()].sort());
+	map_prefixes_2 = new Map([..._map_prefixes_2.entries()].sort(comp_with_broken_c));
 }
 
 /**
@@ -208,7 +216,7 @@ function get_prefixes_3() {
 		++i;
 	}
 	
-	map_prefixes_3 = new Map([..._map_prefixes_3.entries()].sort());
+	map_prefixes_3 = new Map([..._map_prefixes_3.entries()].sort(comp_with_broken_c));
 }
 
 /**
@@ -230,7 +238,7 @@ function get_suffixes_3() {
 		++i;
 	}
 	
-	map_suffixes_3 = new Map([..._map_suffixes_3.entries()].sort());
+	map_suffixes_3 = new Map([..._map_suffixes_3.entries()].sort(comp_with_broken_c));
 }
 
 /**
@@ -259,7 +267,7 @@ function get_subsets() {
 		++i;
 	}
 	
-	map_subsets = new Map([..._map_subsets.entries()].sort());
+	map_subsets = new Map([..._map_subsets.entries()].sort(comp_with_broken_c));
 }
 
 /**
@@ -372,7 +380,7 @@ function update_cell_prefixes_suffixes(word) {
 }
 
 function update_cell_subsets(word) {
-	var subset = Array.from( new Set(word.split('')) ).sort().join('');
+	var subset = Array.from( new Set(word.split('')) ).sort(comp_with_broken_c).join('');
 	var new_count = map_subsets.get(subset) - 1;
 	map_subsets.set(subset, new_count);
 }
