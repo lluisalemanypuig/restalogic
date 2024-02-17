@@ -328,12 +328,16 @@ function make_cluesgrid() {
 
 /* ------------------------------------------------------------------ */
 
+/**
+ * @brief Updates the clues grid.
+ * @pre Word 'word' is normalized.
+ */
 function update_cell_cluesgrid(word) {
 	const initial = word[0];
 	//~ console.log("word= '" + word + "'");
 	//~ console.log("initial=", initial);
 	var index_initial = map_letters.get(initial);
-	var index_length = (word_length(word) - min_word_length) + 1;
+	var index_length = (word.length - min_word_length) + 1;
 	
 	var i = index_initial - 1;
 	var j = index_length - 1;
@@ -354,7 +358,7 @@ function update_cell_cluesgrid(word) {
 }
 
 function update_cell_prefixes_2(word) {
-	var prefix = word[0] + word[1];
+	var prefix = word.substring(0, 2);
 	if (map_prefixes_2.has(prefix)) {
 		var new_count = map_prefixes_2.get(prefix) - 1;
 		map_prefixes_2.set(prefix, new_count);
@@ -362,7 +366,7 @@ function update_cell_prefixes_2(word) {
 }
 
 function update_cell_prefixes_3(word) {
-	var prefix = word[0] + word[1] + word[2];
+	var prefix = word.substring(0, 3);
 	if (map_prefixes_3.has(prefix)) {
 		var new_count = map_prefixes_3.get(prefix) - 1;
 		map_prefixes_3.set(prefix, new_count);
@@ -370,8 +374,7 @@ function update_cell_prefixes_3(word) {
 }
 
 function update_cell_suffixes_3(word) {
-	var length = word.length;
-	var suffix = word[length - 3] + word[length - 2] + word[length - 1];
+	var suffix = word.substring(word.length - 3, word.length);
 	if (map_suffixes_3.has(suffix)) {
 		var new_count = map_suffixes_3.get(suffix) - 1;
 		map_suffixes_3.set(suffix, new_count);
