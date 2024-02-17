@@ -271,7 +271,7 @@ function get_subsets() {
 }
 
 /**
- * Retrieve all information concerning the clues grid.
+ * Retrieve all information in the clues grid.
  * 
  * @pre Needs the value of:
  * - num_rows
@@ -280,10 +280,11 @@ function get_subsets() {
  * - cluesgrid
  * - min_word_length
  */
-function make_clustergrid() {
+function make_cluesgrid() {
 	// 'cluesgrid' object
 	var cluesgrid_body = 
-		document.getElementById("table_graella")
+		document
+		.getElementById("table_graella")
 		.getElementsByTagName("tbody");
 	
 	if (cluesgrid_body.length == 0) {
@@ -329,12 +330,16 @@ function make_clustergrid() {
 
 function update_cell_cluesgrid(word) {
 	const initial = word[0];
+	//~ console.log("word= '" + word + "'");
+	//~ console.log("initial=", initial);
 	var index_initial = map_letters.get(initial);
 	var index_length = (word_length(word) - min_word_length) + 1;
 	
 	var i = index_initial - 1;
 	var j = index_length - 1;
-	//~ console.log("Update cell", i, j);
+	//~ console.log("index_initial=", i);
+	//~ console.log("index_length=", j);
+	//~ console.log("Update cell:", i, j);
 	
 	// update cell corresponding to the word
 	--cluesgrid[i][j];
@@ -380,7 +385,12 @@ function update_cell_prefixes_suffixes(word) {
 }
 
 function update_cell_subsets(word) {
-	var subset = Array.from( new Set(word.split('')) ).sort(comp_with_broken_c).join('');
+	var subset =
+		Array
+			.from( new Set(word.split('')) )
+			.sort(comp_with_broken_c)
+			.join('');
+			
 	var new_count = map_subsets.get(subset) - 1;
 	map_subsets.set(subset, new_count);
 }
@@ -424,6 +434,9 @@ function retrieve_all_words_first_time() {
 	
 	while (i < children.length) {
 		
+		// This loop ensures that we skip double words separated by 'o',
+		// such as: "dina , lila o lilà , mida".
+		// After having processed "lila" we want to go to "mida".
 		while (
 			i < children.length &&
 			children[i].nodeValue != ", " &&
@@ -548,7 +561,8 @@ function retrieve_all_words_nth_time(goal_num_words) {
 function update_html_grid() {
 	// 'cluesgrid' object
 	var cluesgrid_body = 
-		document.getElementById("table_graella")
+		document
+		.getElementById("table_graella")
 		.getElementsByTagName("tbody");
 	
 	if (cluesgrid_body.length == 0) {
@@ -579,7 +593,11 @@ function update_html_prefixes_2() {
 	for (const [key, value] of map_prefixes_2) {
 		contents += key + "-" + value + " ";
 	}
-	document.getElementById("prefix2").children[0].nextSibling.textContent = contents;
+	document
+		.getElementById("prefix2")
+		.children[0]
+		.nextSibling
+		.textContent = contents;
 }
 
 function update_html_prefixes_3() {
@@ -587,7 +605,11 @@ function update_html_prefixes_3() {
 	for (const [key, value] of map_prefixes_3) {
 		contents += key + "-" + value + " ";
 	}
-	document.getElementById("prefix3").children[0].nextSibling.textContent = contents;
+	document
+		.getElementById("prefix3")
+		.children[0]
+		.nextSibling
+		.textContent = contents;
 }
 
 function update_html_suffixes_3() {
@@ -595,7 +617,11 @@ function update_html_suffixes_3() {
 	for (const [key, value] of map_suffixes_3) {
 		contents += key + "-" + value + " ";
 	}
-	document.getElementById("sufix3").children[0].nextSibling.textContent = contents;
+	document
+		.getElementById("sufix3")
+		.children[0]
+		.nextSibling
+		.textContent = contents;
 }
 
 function update_html_prefixes_suffixes() {
@@ -609,7 +635,11 @@ function update_html_subsets() {
 	for (const [key, value] of map_subsets) {
 		contents += key + "-" + value + " ";
 	}
-	document.getElementById("subconjunts").children[0].nextSibling.textContent = contents;
+	document
+		.getElementById("subconjunts")
+		.children[0]
+		.nextSibling
+		.textContent = contents;
 }
 
 function update_html_clues() {
@@ -633,7 +663,7 @@ function update_html(event) {
 		//~ console.log("num_rows=", num_rows);
 		
 		// initialize grid
-		make_clustergrid();
+		make_cluesgrid();
 		num_cols = cluesgrid[0].length;
 		
 		//~ console.log("cluesgrid:", cluesgrid);
@@ -672,5 +702,7 @@ function update_html(event) {
 	update_html_clues();
 }
 
-document.getElementById("pistes-link").addEventListener('click', update_html);
+document
+	.getElementById("pistes-link")
+	.addEventListener('click', update_html);
 
