@@ -1,6 +1,6 @@
 /*
-Restalogic -- extensió web per a l'aplicació web Paraulògic
-Copyright (C) 2023 Lluís Alemany Puig
+Restalògic -- extensió web per a l'aplicació web Paraulògic
+Copyright (C) 2023 - 2024 Lluís Alemany Puig
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
