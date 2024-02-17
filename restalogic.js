@@ -159,9 +159,9 @@ function get_letters() {
 	//~ console.log(hex_grid);
 	
 	for (var i = 0; i < 7; ++i) {
-		var lletra = hex_grid.childNodes[i].childNodes[0].childNodes[0].textContent;
-		if (lletra != " ") {
-			all_letters.push(lletra);
+		var letter = hex_grid.childNodes[i].childNodes[0].childNodes[0].textContent;
+		if (letter != " ") {
+			all_letters.push(letter);
 		}
 	}
 	
