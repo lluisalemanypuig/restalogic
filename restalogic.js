@@ -124,11 +124,12 @@ function from_accent_to_nonaccent(c) {
 }
 
 var normalization_table = {
-	"al dedins de" : "dedins",
+	"a collibè" : "collibe",
 	"a la babalà" : "babala",
 	"a la par" : "par",
 	"a la xirinxina" : "xirinxina",
 	"a palpes" : "palpes",
+	"al dedins de" : "dedins",
 	"de filis" : "filis",
 	"de gom a gom" : "gom",
 	"de reüll" : "reull",
