@@ -1,0 +1,15 @@
+name: Find multitoken words
+
+on:
+  schedule:
+    - cron:  '0 7 * * *'
+
+jobs:
+  update_traffic:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Find multitoken words
+        run: ./find_multitoken_words.sh
+  
