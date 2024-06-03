@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#wget https://www.vilaweb.cat/paraulogic -O index.html
+wget https://www.vilaweb.cat/paraulogic -O index.html
 
 python3 find_multitoken_words.py
 res=$?
