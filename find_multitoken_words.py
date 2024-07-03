@@ -76,7 +76,7 @@ for key, value in solution["p"].items():
 		print(f"    Inspecting multitoken word '{w}'")
 		
 		is_known = any(map(lambda known: known == w, known_multitoken_words))
-		print(f"    Is multitoken word known? {is_known}")
+		print(f"    Is multitoken word '{w}' known? {is_known}")
 		
 		if not is_known:
 			unknown_multitoken_words = True
