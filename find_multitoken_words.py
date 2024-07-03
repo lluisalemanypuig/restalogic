@@ -66,13 +66,17 @@ for key, value in solution["p"].items():
 	if type(value) == str:
 		value = [value]
 	
+	multitoken_words = any(map(lambda s: s.find(" ") != -1, value))
+	if multitoken_words:
+		print(f"Inspecting stem: '{value}'")
+		print(f"    Solutions per stem: '{value}'")
+		print(f"    Found multitoken words in the stem? {multitoken_words}")
+	
 	for w in filter(lambda s: s.find(" ") != -1, value):
-		print(f"Inspecting '{w}'")
-		
-		multitoken_words = True
+		print(f"    Inspecting multitoken word '{w}'")
 		
 		is_known = any(map(lambda known: known == w, known_multitoken_words))
-		print(f"{key}: {value} -- {is_known}")
+		print(f"    Is multitoken word known? {is_known}")
 		
 		if not is_known:
 			unknown_multitoken_words = True
