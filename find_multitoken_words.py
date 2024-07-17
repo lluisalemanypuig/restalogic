@@ -57,32 +57,33 @@ fin = entire_file.find("};", ini)
 solution = eval(entire_file[ini+6:fin+1])
 
 multitoken_words = False
-unknown_multitoken_words = False
-for key, stem in solution["p"].items():
+exist_unknown_multitoken_words = False
+
+for stem, solutions in solution["p"].items():
 	
-	if stem.find(" o ") != -1:
-		stem = stem.split(" o ")
+	if solutions.find(" o ") != -1:
+		solutions = solutions.split(" o ")
 	
-	if type(stem) == str:
-		stem = [stem]
+	if type(solutions) == str:
+		solutions = [solutions]
 	
-	multitoken_words_in_stem = any(map(lambda s: s.find(" ") != -1, stem))
+	multitoken_words_in_stem = any(map(lambda s: s.find(" ") != -1, solutions))
 	if multitoken_words_in_stem:
 		print(f"Inspecting stem: '{stem}'")
-		print(f"    Solutions per stem: '{stem}'")
-		print(f"    Found multitoken words in the stem? True")
+		print(f"    Solutions per stem: '{solutions}'")
+		print(f"    Found multitoken words in the solutions? True")
 		multitoken_words = True
-	
-	for w in filter(lambda s: s.find(" ") != -1, stem):
-		print(f"    Inspecting multitoken word '{w}'")
 		
-		is_known = any(map(lambda known: known == w, known_multitoken_words))
-		print(f"    Is multitoken word '{w}' known? {is_known}")
-		
-		if not is_known:
-			unknown_multitoken_words = True
+		for w in filter(lambda s: s.find(" ") != -1, solutions):
+			print(f"    Inspecting multitoken word '{w}'")
+			
+			is_known = any(map(lambda known: known == w, known_multitoken_words))
+			print(f"    Is multitoken word '{w}' known? {is_known}")
+			
+			if not is_known:
+				exist_unknown_multitoken_words = True
 
-if unknown_multitoken_words:
+if exist_unknown_multitoken_words:
 	exit_with_code(UNKNOWN_MULTITOKEN_WORDS)
 
 if multitoken_words:
