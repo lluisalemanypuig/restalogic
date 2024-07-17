@@ -7,7 +7,7 @@ INDEX_FILE_COULD_NOT_BE_OPENED=4
 def exit_with_code(code):
 	print(f"Exit with code: {code}")
 	if code == NO_MULTITOKEN_WORDS:
-		print("Python did not find unknown multitoken words")
+		print("Python did not find multitoken words")
 	elif code == EXIST_MULTITOKEN_WORDS:
 		print("Python found multitoken words but these are already in the addon.")
 	elif code == UNKNOWN_MULTITOKEN_WORDS:
