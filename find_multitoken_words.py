@@ -58,21 +58,22 @@ solution = eval(entire_file[ini+6:fin+1])
 
 multitoken_words = False
 unknown_multitoken_words = False
-for key, value in solution["p"].items():
+for key, stem in solution["p"].items():
 	
-	if value.find(" o ") != -1:
-		value = value.split(" o ")
+	if stem.find(" o ") != -1:
+		stem = stem.split(" o ")
 	
-	if type(value) == str:
-		value = [value]
+	if type(stem) == str:
+		stem = [stem]
 	
-	multitoken_words = any(map(lambda s: s.find(" ") != -1, value))
-	if multitoken_words:
-		print(f"Inspecting stem: '{value}'")
-		print(f"    Solutions per stem: '{value}'")
-		print(f"    Found multitoken words in the stem? {multitoken_words}")
+	multitoken_words_in_stem = any(map(lambda s: s.find(" ") != -1, stem))
+	if multitoken_words_in_stem:
+		print(f"Inspecting stem: '{stem}'")
+		print(f"    Solutions per stem: '{stem}'")
+		print(f"    Found multitoken words in the stem? True")
+		multitoken_words = True
 	
-	for w in filter(lambda s: s.find(" ") != -1, value):
+	for w in filter(lambda s: s.find(" ") != -1, stem):
 		print(f"    Inspecting multitoken word '{w}'")
 		
 		is_known = any(map(lambda known: known == w, known_multitoken_words))
