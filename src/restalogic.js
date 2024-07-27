@@ -134,6 +134,7 @@ var normalization_table = {
 	"al dedins de" : "dedins",
 	"de filis" : "filis",
 	"de gom a gom" : "gom",
+	"de mantinent" : "mantinent",
 	"de reüll" : "reull",
 	"en pac de" : "pac",
 	"en vist" : "vist",
