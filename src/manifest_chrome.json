@@ -1,0 +1,22 @@
+{
+	"manifest_version": 3,
+	"name": "Restalògic",
+	"version": "2024.7.27",
+	
+	"author": "Lluís Alemany Puig",
+	
+	"description": "Actualitza la graella de les pistes del paraulògic.",
+	"icons": {
+		"48": "icons/restalogic-48.png"
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"*://www.vilaweb.cat/paraulogic*"
+			],
+			"js": [
+				"restalogic.js"
+			]
+		}
+	]
+}
