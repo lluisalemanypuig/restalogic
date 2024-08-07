@@ -5,7 +5,7 @@ SOLUTION_MAP_NOT_FOUND=3
 INDEX_FILE_COULD_NOT_BE_OPENED=4
 
 def exit_with_code(code):
-	print(f"Exit with code: {code}")
+	print(f"Quit python with code: {code}")
 	if code == NO_MULTITOKEN_WORDS:
 		print("Python did not find multitoken words")
 	elif code == EXIST_MULTITOKEN_WORDS:
