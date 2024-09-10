@@ -132,6 +132,7 @@ var normalization_table = {
 	"a mansalva" : "mansalva",
 	"a palpes" : "palpes",
 	"a remà" : "rema",
+	"al capdavant" : "capdavant",
 	"al dedins de" : "dedins",
 	"de filis" : "filis",
 	"de gom a gom" : "gom",
