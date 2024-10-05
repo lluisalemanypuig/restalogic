@@ -31,7 +31,7 @@ def retrieve_known_multitoken_words():
 	"""
 	known_multitoken_words = None
 	with open('src/restalogic.js', 'r') as f:
-		known_multitoken_words = ''.join(list(map(lambda s: trim_string(s), f.readlines()[126:144])))
+		known_multitoken_words = ''.join(list(map(lambda s: trim_string(s), f.readlines()[126:146])))
 		known_multitoken_words = "{" + known_multitoken_words + "}"
 		known_multitoken_words = list(eval(known_multitoken_words).keys())
 	
@@ -70,8 +70,8 @@ for stem, solutions in solution["p"].items():
 	multitoken_words_in_stem = any(map(lambda s: s.find(" ") != -1, solutions))
 	if multitoken_words_in_stem:
 		print(f"Inspecting stem: '{stem}'")
-		print(f"    Solutions per stem: '{solutions}'")
-		print(f"    Found multitoken words in the solutions? True")
+		print(f"    Solutions per stem: {solutions}")
+		print(f"    Found multitoken words in the solutions")
 		multitoken_words = True
 		
 		for w in filter(lambda s: s.find(" ") != -1, solutions):
