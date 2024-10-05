@@ -142,6 +142,8 @@ var normalization_table = {
 	"en vist" : "vist",
 	"en off" : "off",
 	"per mor de" : "mor",
+	"vet ací" : "vet",
+	"vet aquí" : "vet"
 };
 
 /* ------------------------------------------------------------------ */
