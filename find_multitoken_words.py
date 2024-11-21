@@ -31,7 +31,7 @@ def retrieve_known_multitoken_words():
 	"""
 	known_multitoken_words = None
 	with open('src/restalogic.js', 'r') as f:
-		known_multitoken_words = ''.join(list(map(lambda s: trim_string(s), f.readlines()[126:146])))
+		known_multitoken_words = ''.join(list(map(lambda s: trim_string(s), f.readlines()[126:148])))
 		known_multitoken_words = "{" + known_multitoken_words + "}"
 		known_multitoken_words = list(eval(known_multitoken_words).keys())
 	
