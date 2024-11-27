@@ -132,6 +132,7 @@ var normalization_table = {
 	"a l'empel" : "empel",
 	"a mansalva" : "mansalva",
 	"a palpes" : "palpes",
+	"a rajaploma" : "rajaploma",
 	"a remà" : "rema",
 	"al capdavant" : "capdavant",
 	"al dedins de" : "dedins",
