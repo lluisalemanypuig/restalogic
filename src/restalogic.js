@@ -140,7 +140,7 @@ var normalization_table = {
 	"de filis" : "filis",
 	"de gom a gom" : "gom",
 	"de mantinent" : "mantinent",
-	"de sotama" : "sotama",
+	"de sotamà" : "sotama",
 	"en doina" : "doina",
 	"en off" : "off",
 	"en pac de" : "pac",
