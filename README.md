@@ -1,5 +1,7 @@
 # Restalògic
 
+_Atenció_ El manteniment d'aquesta extensió es va pausar el dia 25 de març de 2025.
+
 Extensió web per a l'aplicació [Paraulògic](https://vilaweb.cat/paraulogic), que actualitza el comptatge de les pistes segons les paraules trobades.
 
 L'extensió està disponible pels següents navegadors:
