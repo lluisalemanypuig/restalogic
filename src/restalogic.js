@@ -126,6 +126,7 @@ function from_accent_to_nonaccent(c) {
 var normalization_table = {
 	"a bondo" : "bondo",
 	"a collibè" : "collibe",
+	"a granel" : "granel",
 	"a la babalà" : "babala",
 	"a la par" : "par",
 	"a la xirinxina" : "xirinxina",
@@ -133,6 +134,8 @@ var normalization_table = {
 	"a mansalva" : "mansalva",
 	"a palpes" : "palpes",
 	"a rajaploma" : "rajaploma",
+	"a rapis", "rapis",
+	"a redossa" : "redossa",
 	"a remà" : "rema",
 	"al capdavant" : "capdavant",
 	"al dedins de" : "dedins",
